@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25-in-1 Ko'p Funksiyali Interaktiv Vositalar Platformasi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 glass border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-cubes"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">UzTools</h1>
+                    <span class="text-xs text-slate-400">25 ta Interaktiv Vosita</span>
+                </div>
+            </div>
+
+            <!-- Global Search -->
+            <div class="flex-1 max-w-md relative hidden sm:block">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="filterTools()" placeholder="Vositani izlash (masalan: kalkulyator, parol, o'yin)..." 
+                    class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="text-xs px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 font-medium border border-brand-500/20">
+                    <i class="fa-solid fa-bolt mr-1"></i> Barchasi Bepul
+                </span>
+            </div>
+        </div>
+        
+        <!-- Mobile search input -->
+        <div class="px-4 pb-3 sm:hidden">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInputMobile" oninput="filterToolsMobile()" placeholder="Izlash..." 
+                    class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Filter Tabs -->
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full sm:w-auto" id="filterTabs">
+                <button onclick="setCategory('all')" class="tab-btn active px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap bg-brand-600 text-white">Barchasi (25)</button>
+                <button onclick="setCategory('calc')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">Hisoblagichlar</button>
+                <button onclick="setCategory('text')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">Matn va Kod</button>
+                <button onclick="setCategory('utility')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">Foydali Vositalar</button>
+                <button onclick="setCategory('games')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">O'yin va Stres-Relief</button>
+            </div>
+        </div>
+
+        <!-- Grid of Tools -->
+        <div id="toolsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <!-- Dynamic tool cards injected here via JS -->
+        </div>
+
+        <!-- Empty Search State -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <i class="fa-solid fa-ghost text-4xl text-slate-600 mb-3"></i>
+            <h3 class="text-lg font-semibold text-slate-300">Vosita topilmadi</h3>
+            <p class="text-sm text-slate-500">Boshqa so'z bilan qidirib ko'ring yoki kategoriyani o'zgartiring.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 UzTools Platformasi. Barcha huquqlar saqlangan. Qulay va tezkor ish unumdorligi vositalari.</p>
+    </footer>
+
+    <!-- Universal Modal Window -->
+    <div id="toolModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transform transition-all scale-95" id="modalContainer">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <div id="modalIcon" class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-wrench"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="text-lg font-bold text-white">Vosita Nomi</h3>
+                        <p id="modalDesc" class="text-xs text-slate-400">Tavsifi</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Dynamic View) -->
+            <div id="modalBody" class="p-6 overflow-y-auto flex-1">
+                <!-- Tool content injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-800 text-white border border-slate-700 px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg" class="text-sm">Xabar</span>
+    </div>
+
+    <script>
+        // Data structure for 25 Tools
+        const tools = [
+            { id: 1, name: "Kalkulyator", category: "calc", icon: "fa-calculator", desc: "Standart va ilmiy matematik hisob-kitoblar.", badge: "Hisob" },
+            { id: 2, name: "Matn Sanoq", category: "text", icon: "fa-font", desc: "So'zlar, belgilar va o'qish vaqtini hisoblash.", badge: "Matn" },
+            { id: 3, name: "Parol Generatori", category: "utility", icon: "fa-key", desc: "Xavfsiz va murakkab parollar yaratish.", badge: "Xavfsizlik" },
+            { id: 4, name: "Taymer & Sekundomer", category: "utility", icon: "fa-stopwatch", desc: "Sekundomer va hisoblagich taymeri.", badge: "Vaqt" },
+            { id: 5, name: "Valyuta Konvertori", category: "calc", icon: "fa-coins", desc: "USD, EUR, UZS, RUB valyutalari nisbati.", badge: "Moliya" },
+            { id: 6, name: "Vazifa Boshqaruvchi", category: "utility", icon: "fa-list-check", desc: "Kunlik reja va todo ro'yxatini yuritish.", badge: "Reja" },
+            { id: 7, name: "Qaydlar Ilovasi", category: "utility", icon: "fa-note-sticky", desc: "Qaydlar yozish va saqlash paneli.", badge: "Xotira" },
+            { id: 8, name: "Rang Vizualizatori", category: "utility", icon: "fa-palette", desc: "HEX/RGB kodlar tanlash va paletka yaratish.", badge: "Dizayn" },
+            { id: 9, name: "QR Kod Generatori", category: "utility", icon: "fa-qrcode", desc: "Matn va havolalarni QR koda aylantirish.", badge: "Kod" },
+            { id: 10, name: "BMI Hisoblagich", category: "calc", icon: "fa-weight-scale", desc: "Tana massasi indeksini tahlil qilish.", badge: "Salomatlik" },
+            { id: 11, name: "Unit Konvertor", category: "calc", icon: "fa-ruler-combined", desc: "Uzunlik, vazn va harorat o'lchovlari.", badge: "O'lchov" },
+            { id: 12, name: "Tasodifiy Generator", category: "utility", icon: "fa-dice", desc: "Tanga tashlash, kubik va tasodifiy raqam.", badge: "Tasodif" },
+            { id: 13, name: "Vaqt Mintaqasi Soati", category: "utility", icon: "fa-globe", desc: "Dunyo shaharlari aniq vaqtini kuzatish.", badge: "Vaqt" },
+            { id: 14, name: "Tikon-Nol O'yini", category: "games", icon: "fa-gamepad", desc: "Klassik Tic-Tac-Toe o'yini (2 kishilik).", badge: "O'yin" },
+            { id: 15, name: "Xotira Testi O'yini", category: "games", icon: "fa-brain", desc: "Emojilarni juftlab topish xotira o'yini.", badge: "O'yin" },
+            { id: 16, name: "Markdown Muharriri", category: "text", icon: "fa-code", desc: "Jonli HTML ko'rinishga ega Markdown muharriri.", badge: "Matn" },
+            { id: 17, name: "Matndan Ovoz (TTS)", category: "text", icon: "fa-volume-high", desc: "Yozilgan matnni ovozli o'qib berish.", badge: "Ovoz" },
+            { id: 18, name: "Chiqim & Daromad", category: "calc", icon: "fa-wallet", desc: "Shaxsiy byudjet va balans hisoblagichi.", badge: "Moliya" },
+            { id: 19, name: "Chegirma Hisoblagich", category: "calc", icon: "fa-tags", desc: "Chegirmali narx va tejalgan pulni aniqlash.", badge: "Moliya" },
+            { id: 20, name: "JSON Formatter", category: "text", icon: "fa-brackets-curly", desc: "JSON kodlarni tekshirish va chiroyli shaklga keltirish.", badge: "Kod" },
+            { id: 21, name: "Yosh Hisoblagich", category: "calc", icon: "fa-cake-candles", desc: "Tug'ilgan sanadan aniq yoshni aniqlash.", badge: "Vaqt" },
+            { id: 22, name: "Pomodoro Taymer", category: "utility", icon: "fa-hourglass-half", desc: "Diqqatni jamlash uchun 25/5 daqiqalik sikl.", badge: "Samara" },
+            { id: 23, name: "Yozish Tezligi Testi", category: "games", icon: "fa-keyboard", desc: "Klaviatura bosish tezligini (WPM) aniqlash.", badge: "Test" },
+            { id: 24, name: "Base64 Enkoder", category: "text", icon: "fa-lock", desc: "Matnlarni Base64 shakliga va ortga o'g'irish.", badge: "Kod" },
+            { id: 25, name: "Kunlik Iqtiboslar", category: "utility", icon: "fa-quote-left", desc: "Motivatsion iqtiboslar va shukronalik paneli.", badge: "Ilhom" }
+        ];
+
+        let currentCategory = 'all';
+
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTools(tools);
+        });
+
+        // Filter Functionality
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            event.target.classList.remove('bg-slate-800', 'text-slate-300');
+            event.target.classList.add('bg-brand-600', 'text-white');
+            filterTools();
+        }
+
+        function filterTools() {
+            const query = (document.getElementById('searchInput').value || document.getElementById('searchInputMobile').value || '').toLowerCase();
+            const filtered = tools.filter(t => {
+                const matchesCat = (currentCategory === 'all' || t.category === currentCategory);
+                const matchesQuery = t.name.toLowerCase().includes(query) || t.desc.toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+            renderTools(filtered);
+        }
+
+        function filterToolsMobile() {
+            document.getElementById('searchInput').value = document.getElementById('searchInputMobile').value;
+            filterTools();
+        }
+
+        // Render Tool Cards
+        function renderTools(items) {
+            const grid = document.getElementById('toolsGrid');
+            const empty = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            items.forEach(t => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl p-5 flex flex-col justify-between cursor-pointer group";
+                card.onclick = () => openTool(t.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition duration-300 text-xl shadow-inner">
+                                <i class="fa-solid ${t.icon}"></i>
+                            </div>
+                            <span class="text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 border border-slate-700/50">${t.badge}</span>
+                        </div>
+                        <h3 class="font-bold text-white text-base group-hover:text-brand-400 transition mb-1">${t.name}</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">${t.desc}</p>
+                    </div>
+                    <div class="flex items-center text-xs font-semibold text-brand-400 group-hover:translate-x-1 transition duration-200">
+                        <span>Ishga tushirish</span>
+                        <i class="fa-solid fa-arrow-right ml-1.5 text-[10px]"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Modal Management
+        function openTool(id) {
+            const tool = tools.find(t => t.id === id);
+            if (!tool) return;
+
+            document.getElementById('modalTitle').innerText = tool.name;
+            document.getElementById('modalDesc').innerText = tool.desc;
+            document.getElementById('modalIcon').innerHTML = `<i class="fa-solid ${tool.icon}"></i>`;
+            
+            const body = document.getElementById('modalBody');
+            body.innerHTML = ''; // Clear previous content
+
+            // Load specific tool content
+            loadToolContent(id, body);
+
+            const modal = document.getElementById('toolModal');
+            const container = document.getElementById('modalContainer');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                container.classList.remove('scale-95');
+                container.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('toolModal');
+            const container = document.getElementById('modalContainer');
+            container.classList.remove('scale-100');
+            container.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('modalBody').innerHTML = ''; // Stop sounds/intervals
+            }, 200);
+        }
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            document.getElementById('toastMsg').innerText = msg;
+            
+            icon.className = isSuccess ? "fa-solid fa-circle-check text-emerald-400" : "fa-solid fa-triangle-exclamation text-rose-400";
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // ==========================================
+        // 25 DYNAMIC TOOLS LOGIC IMPLEMENTATION
+        // ==========================================
+
+        function loadToolContent(id, container) {
+            switch(id) {
+                // 1. Kalkulyator
+                case 1:
+                    container.innerHTML = `
+                        <div class="max-w-xs mx-auto bg-slate-950 p-4 rounded-2xl border border-slate-800 shadow-lg">
+                            <input type="text" id="calcDisplay" readonly class="w-full bg-slate-900 text-right text-2xl font-mono text-white p-3 rounded-xl mb-3 border border-slate-800" value="0">
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="calcOp('C')" class="col-span-2 bg-rose-500/20 text-rose-400 p-3 rounded-xl font-bold hover:bg-rose-500/30">C</button>
+                                <button onclick="calcOp('DEL')" class="bg-slate-800 text-slate-300 p-3 rounded-xl hover:bg-slate-700">⌫</button>
+                                <button onclick="calcOp('/')" class="bg-brand-600 text-white p-3 rounded-xl font-bold hover:bg-brand-500">÷</button>
+                                
+                                <button onclick="calcNum('7')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">7</button>
+                                <button onclick="calcNum('8')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">8</button>
+                                <button onclick="calcNum('9')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">9</button>
+                                <button onclick="calcOp('*')" class="bg-brand-600 text-white p-3 rounded-xl font-bold hover:bg-brand-500">×</button>
+                                
+                                <button onclick="calcNum('4')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">4</button>
+                                <button onclick="calcNum('5')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">5</button>
+                                <button onclick="calcNum('6')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">6</button>
+                                <button onclick="calcOp('-')" class="bg-brand-600 text-white p-3 rounded-xl font-bold hover:bg-brand-500">-</button>
+                                
+                                <button onclick="calcNum('1')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">1</button>
+                                <button onclick="calcNum('2')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">2</button>
+                                <button onclick="calcNum('3')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">3</button>
+                                <button onclick="calcOp('+')" class="bg-brand-600 text-white p-3 rounded-xl font-bold hover:bg-brand-500">+</button>
+                                
+                                <button onclick="calcNum('0')" class="col-span-2 bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">0</button>
+                                <button onclick="calcNum('.')" class="bg-slate-800 text-white p-3 rounded-xl hover:bg-slate-700">.</button>
+                                <button onclick="calcEqual()" class="bg-emerald-600 text-white p-3 rounded-xl font-bold hover:bg-emerald-500">=</button>
+                            </div>
+                        </div>
+                    `;
+                    window.calcVal = "0";
+                    window.calcNum = function(n) {
+                        if (window.calcVal === "0") window.calcVal = n;
+                        else window.calcVal += n;
+                        document.getElementById('calcDisplay').value = window.calcVal;
+                    };
+                    window.calcOp = function(op) {
+                        if (op === 'C') window.calcVal = "0";
+                        else if (op === 'DEL') window.calcVal = window.calcVal.slice(0, -1) || "0";
+                        else window.calcVal += op;
+                        document.getElementById('calcDisplay').value = window.calcVal;
+                    };
+                    window.calcEqual = function() {
+                        try {
+                            window.calcVal = eval(window.calcVal).toString();
+                            document.getElementById('calcDisplay').value = window.calcVal;
+                        } catch {
+                            document.getElementById('calcDisplay').value = "Xatolik";
+                            window.calcVal = "0";
+                        }
+                    };
+                    break;
+
+                // 2. Matn Sanoq
+                case 2:
+                    container.innerHTML = `
+                        <div class="space-y-4">
+                            <textarea id="counterText" oninput="updateTextStats()" rows="6" placeholder="Bu yerga matn kiriting yoki nusxalab qo'ying..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-brand-500"></textarea>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50">
+                                    <span id="charCount" class="block text-xl font-bold text-brand-400">0</span>
+                                    <span class="text-xs text-slate-400">Belgilar</span>
+                                </div>
+                                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50">
+                                    <span id="wordCount" class="block text-xl font-bold text-emerald-400">0</span>
+                                    <span class="text-xs text-slate-400">So'zlar</span>
+                                </div>
+                                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50">
+                                    <span id="sentenceCount" class="block text-xl font-bold text-amber-400">0</span>
+                                    <span class="text-xs text-slate-400">Gaplar</span>
+                                </div>
+                                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50">
+                                    <span id="readTime" class="block text-xl font-bold text-purple-400">0 daq</span>
+                                    <span class="text-xs text-slate-400">O'qish vaqti</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    window.updateTextStats = function() {
+                        const txt = document.getElementById('counterText').value;
+                        document.getElementById('charCount').innerText = txt.length;
+                        const words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+                        document.getElementById('wordCount').innerText = words;
+                        const sentences = txt.trim() ? txt.split(/[.!?]+/).filter(Boolean).length : 0;
+                        document.getElementById('sentenceCount').innerText = sentences;
+                        document.getElementById('readTime').innerText = Math.ceil(words / 200) + " daq";
+                    };
+                    break;
+
+                // 3. Parol Generatori
+                case 3:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-md mx-auto">
+                            <div class="flex gap-2">
+                                <input type="text" id="passOutput" readonly class="flex-1 bg-slate-950 border border-slate-800 text-emerald-400 font-mono font-bold text-lg rounded-xl px-4 py-3">
+                                <button onclick="copyPass()" class="bg-brand-600 hover:bg-brand-500 text-white px-4 rounded-xl font-semibold"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                            <div class="space-y-3 bg-slate-800/40 p-4 rounded-xl border border-slate-700/50">
+                                <div>
+                                    <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                        <span>Uzunlik:</span>
+                                        <span id="passLenVal" class="font-bold text-brand-400">16</span>
+                                    </div>
+                                    <input type="range" id="passLen" min="6" max="32" value="16" oninput="genPass()" class="w-full accent-brand-500">
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-sm text-slate-300">
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passUpper" checked onchange="genPass()" class="rounded accent-brand-500"> Katta harflar</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passLower" checked onchange="genPass()" class="rounded accent-brand-500"> Kichik harflar</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passNum" checked onchange="genPass()" class="rounded accent-brand-500"> Raqamlar (0-9)</label>
+                                    <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="passSym" checked onchange="genPass()" class="rounded accent-brand-500"> Belgilar (!@#$)</label>
+                                </div>
+                            </div>
+                            <button onclick="genPass()" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-xl font-medium border border-slate-700">Yangi parol yaratish</button>
+                        </div>
+                    `;
+                    window.genPass = function() {
+                        const len = document.getElementById('passLen').value;
+                        document.getElementById('passLenVal').innerText = len;
+                        let chars = "";
+                        if (document.getElementById('passUpper').checked) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        if (document.getElementById('passLower').checked) chars += "abcdefghijklmnopqrstuvwxyz";
+                        if (document.getElementById('passNum').checked) chars += "0123456789";
+                        if (document.getElementById('passSym').checked) chars += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+                        
+                        if (!chars) { document.getElementById('passOutput').value = "Belgini tanlang"; return; }
+                        let res = "";
+                        for (let i = 0; i < len; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+                        document.getElementById('passOutput').value = res;
+                    };
+                    window.copyPass = function() {
+                        const val = document.getElementById('passOutput').value;
+                        if (!val) return;
+                        navigator.clipboard.writeText(val);
+                        showToast("Parol nusxalandi!");
+                    };
+                    window.genPass();
+                    break;
+
+                // 4. Taymer & Sekundomer
+                case 4:
+                    container.innerHTML = `
+                        <div class="text-center space-y-6">
+                            <div class="text-5xl font-mono font-bold text-brand-400 tracking-wider bg-slate-950 py-6 rounded-2xl border border-slate-800" id="stopwatchDisplay">
+                                00:00:00.0
+                            </div>
+                            <div class="flex justify-center gap-3">
+                                <button id="swStartBtn" onclick="toggleStopwatch()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-semibold">Boshlash</button>
+                                <button onclick="resetStopwatch()" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2.5 rounded-xl font-semibold">Qayta o'rnatish</button>
+                            </div>
+                        </div>
+                    `;
+                    let swInterval = null;
+                    let swTime = 0;
+                    window.toggleStopwatch = function() {
+                        const btn = document.getElementById('swStartBtn');
+                        if (swInterval) {
+                            clearInterval(swInterval);
+                            swInterval = null;
+                            btn.innerText = "Davom ettirish";
+                            btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-semibold";
+                        } else {
+                            const startTime = Date.now() - swTime;
+                            swInterval = setInterval(() => {
+                                swTime = Date.now() - startTime;
+                                const m = Math.floor(swTime / 60000).toString().padStart(2, '0');
+                                const s = Math.floor((swTime % 60000) / 1000).toString().padStart(2, '0');
+                                const ms = Math.floor((swTime % 1000) / 100);
+                                document.getElementById('stopwatchDisplay').innerText = `${m}:${s}.${ms}`;
+                            }, 100);
+                            btn.innerText = "Taqqoslash / Pauza";
+                            btn.className = "bg-amber-600 hover:bg-amber-500 text-white px-6 py-2.5 rounded-xl font-semibold";
+                        }
+                    };
+                    window.resetStopwatch = function() {
+                        clearInterval(swInterval);
+                        swInterval = null;
+                        swTime = 0;
+                        document.getElementById('stopwatchDisplay').innerText = "00:00:00.0";
+                        const btn = document.getElementById('swStartBtn');
+                        btn.innerText = "Boshlash";
+                        btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-semibold";
+                    };
+                    break;
+
+                // 5. Valyuta Konvertori
+                case 5:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-md mx-auto">
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Miqdor</label>
+                                <input type="number" id="currAmount" value="100" oninput="convertCurrency()" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl focus:border-brand-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs text-slate-400 block mb-1">Dan</label>
+                                    <select id="currFrom" onchange="convertCurrency()" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="RUB">RUB (₽)</option>
+                                        <option value="UZS">UZS (so'm)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-slate-400 block mb-1">Ga</label>
+                                    <select id="currTo" onchange="convertCurrency()" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                                        <option value="UZS">UZS (so'm)</option>
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="RUB">RUB (₽)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 text-center">
+                                <span class="text-xs text-slate-400 block mb-1">Natija</span>
+                                <span id="currResult" class="text-2xl font-bold text-emerald-400">0</span>
+                            </div>
+                        </div>
+                    `;
+                    const rates = { USD: 1, EUR: 0.92, RUB: 90, UZS: 12600 };
+                    window.convertCurrency = function() {
+                        const amt = parseFloat(document.getElementById('currAmount').value) || 0;
+                        const from = document.getElementById('currFrom').value;
+                        const to = document.getElementById('currTo').value;
+                        
+                        const inUSD = amt / rates[from];
+                        const result = inUSD * rates[to];
+                        document.getElementById('currResult').innerText = result.toLocaleString('uz-UZ', { maximumFractionDigits: 2 }) + " " + to;
+                    };
+                    window.convertCurrency();
+                    break;
+
+                // 6. Vazifa Boshqaruvchi (Todo)
+                case 6:
+                    container.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="flex gap-2">
+                                <input type="text" id="todoInput" placeholder="Yangi vazifa..." class="flex-1 bg-slate-950 border border-slate-800 text-white p-3 rounded-xl focus:border-brand-500">
+                                <button onclick="addTodo()" class="bg-brand-600 hover:bg-brand-500 text-white px-5 rounded-xl font-semibold"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <div id="todoList" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                        </div>
+                    `;
+                    window.getTodos = () => JSON.parse(localStorage.getItem('app_todos') || '[]');
+                    window.saveTodos = (data) => localStorage.setItem('app_todos', JSON.stringify(data));
+                    
+                    window.renderTodos = function() {
+                        const todos = window.getTodos();
+                        const list = document.getElementById('todoList');
+                        list.innerHTML = todos.length ? '' : '<p class="text-center text-xs text-slate-500 py-4">Vazifalar mavjud emas.</p>';
+                        todos.forEach((t, i) => {
+                            list.innerHTML += `
+                                <div class="flex items-center justify-between bg-slate-800/50 p-3 rounded-xl border border-slate-700/40">
+                                    <div class="flex items-center gap-3 cursor-pointer" onclick="toggleTodo(${i})">
+                                        <input type="checkbox" ${t.done ? 'checked' : ''} class="rounded accent-brand-500">
+                                        <span class="${t.done ? 'line-through text-slate-500' : 'text-slate-200'} text-sm">${t.text}</span>
+                                    </div>
+                                    <button onclick="delTodo(${i})" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            `;
+                        });
+                    };
+                    window.addTodo = function() {
+                        const inp = document.getElementById('todoInput');
+                        if (!inp.value.trim()) return;
+                        const todos = window.getTodos();
+                        todos.push({ text: inp.value.trim(), done: false });
+                        window.saveTodos(todos);
+                        inp.value = '';
+                        window.renderTodos();
+                    };
+                    window.toggleTodo = function(i) {
+                        const todos = window.getTodos();
+                        todos[i].done = !todos[i].done;
+                        window.saveTodos(todos);
+                        window.renderTodos();
+                    };
+                    window.delTodo = function(i) {
+                        const todos = window.getTodos();
+                        todos.splice(i, 1);
+                        window.saveTodos(todos);
+                        window.renderTodos();
+                    };
+                    window.renderTodos();
+                    break;
+
+                // 7. Qaydlar Ilovasi
+                case 7:
+                    container.innerHTML = `
+                        <div class="space-y-3">
+                            <input type="text" id="noteTitle" placeholder="Sarlavha..." class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl font-bold">
+                            <textarea id="noteBody" rows="5" placeholder="Qayd matni..." class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl text-sm"></textarea>
+                            <button onclick="saveNote()" class="w-full bg-brand-600 hover:bg-brand-500 text-white py-2.5 rounded-xl font-semibold">Qaydni saqlash</button>
+                            <div id="notesSaved" class="space-y-2 mt-4 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    `;
+                    window.getNotes = () => JSON.parse(localStorage.getItem('app_notes') || '[]');
+                    window.renderNotes = function() {
+                        const notes = window.getNotes();
+                        const div = document.getElementById('notesSaved');
+                        div.innerHTML = notes.length ? '<h4 class="text-xs font-semibold text-slate-400">Saqlanganlar:</h4>' : '';
+                        notes.forEach((n, i) => {
+                            div.innerHTML += `
+                                <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/50 flex justify-between items-start">
+                                    <div>
+                                        <h5 class="font-bold text-sm text-brand-400">${n.title}</h5>
+                                        <p class="text-xs text-slate-300">${n.body}</p>
+                                    </div>
+                                    <button onclick="delNote(${i})" class="text-rose-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            `;
+                        });
+                    };
+                    window.saveNote = function() {
+                        const title = document.getElementById('noteTitle').value;
+                        const body = document.getElementById('noteBody').value;
+                        if(!title || !body) return;
+                        const notes = window.getNotes();
+                        notes.push({ title, body });
+                        localStorage.setItem('app_notes', JSON.stringify(notes));
+                        document.getElementById('noteTitle').value = '';
+                        document.getElementById('noteBody').value = '';
+                        window.renderNotes();
+                        showToast("Qayd saqlandi");
+                    };
+                    window.delNote = function(i) {
+                        const notes = window.getNotes();
+                        notes.splice(i, 1);
+                        localStorage.setItem('app_notes', JSON.stringify(notes));
+                        window.renderNotes();
+                    };
+                    window.renderNotes();
+                    break;
+
+                // 8. Rang Vizualizatori
+                case 8:
+                    container.innerHTML = `
+                        <div class="space-y-4 text-center max-w-sm mx-auto">
+                            <div id="colorPreview" class="h-32 rounded-2xl border border-slate-700 flex items-center justify-center text-white font-mono font-bold text-lg shadow-inner" style="background:#3b82f6">
+                                #3B82F6
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="colorPicker" value="#3b82f6" oninput="updateColor(this.value)" class="w-12 h-12 rounded-xl bg-transparent border-0 cursor-pointer">
+                                <input type="text" id="hexText" value="#3b82f6" readonly class="flex-1 bg-slate-950 border border-slate-800 text-center text-white p-3 rounded-xl font-mono">
+                                <button onclick="copyColor()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-xl"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    window.updateColor = function(val) {
+                        document.getElementById('colorPreview').style.backgroundColor = val;
+                        document.getElementById('colorPreview').innerText = val.toUpperCase();
+                        document.getElementById('hexText').value = val.toUpperCase();
+                    };
+                    window.copyColor = function() {
+                        navigator.clipboard.writeText(document.getElementById('hexText').value);
+                        showToast("HEX rang kodi nusxalandi!");
+                    };
+                    break;
+
+                // 9. QR Kod Generatori
+                case 9:
+                    container.innerHTML = `
+                        <div class="space-y-4 text-center max-w-sm mx-auto">
+                            <input type="text" id="qrInput" value="https://uztools.uz" placeholder="Havola yoki matn kiriting..." class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl focus:border-brand-500">
+                            <button onclick="genQR()" class="w-full bg-brand-600 hover:bg-brand-500 text-white py-2.5 rounded-xl font-semibold">QR Kod Yaratish</button>
+                            <div class="flex justify-center p-4 bg-white rounded-2xl border border-slate-700">
+                                <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://uztools.uz" alt="QR Code" class="w-44 h-44">
+                            </div>
+                        </div>
+                    `;
+                    window.genQR = function() {
+                        const val = document.getElementById('qrInput').value.trim();
+                        if (!val) return;
+                        document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(val)}`;
+                    };
+                    break;
+
+                // 10. BMI Hisoblagich
+                case 10:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-sm mx-auto">
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Bo'y (sm)</label>
+                                <input type="number" id="bmiHeight" value="175" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Vazn (kg)</label>
+                                <input type="number" id="bmiWeight" value="70" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                            <button onclick="calcBMI()" class="w-full bg-brand-600 hover:bg-brand-500 text-white py-2.5 rounded-xl font-semibold">Hisoblash</button>
+                            <div id="bmiResult" class="hidden text-center p-4 rounded-xl border border-slate-800 bg-slate-950">
+                                <span class="text-xs text-slate-400 block">Sizning BMI:</span>
+                                <span id="bmiVal" class="text-3xl font-bold text-brand-400">0</span>
+                                <p id="bmiStatus" class="text-sm mt-1 font-medium text-slate-300"></p>
+                            </div>
+                        </div>
+                    `;
+                    window.calcBMI = function() {
+                        const h = parseFloat(document.getElementById('bmiHeight').value) / 100;
+                        const w = parseFloat(document.getElementById('bmiWeight').value);
+                        if (!h || !w) return;
+                        const bmi = (w / (h * h)).toFixed(1);
+                        document.getElementById('bmiVal').innerText = bmi;
+                        let status = "";
+                        if (bmi < 18.5) status = "Vazn yetishmovchiligi ⚠️";
+                        else if (bmi < 25) status = "Me'yoriy vazn (Sog'lom) ✅";
+                        else if (bmi < 30) status = "Ortiqcha vazn ⚠️";
+                        else status = "Semizlik 🔴";
+                        document.getElementById('bmiStatus').innerText = status;
+                        document.getElementById('bmiResult').classList.remove('hidden');
+                    };
+                    break;
+
+                // 11. Unit Konvertor
+                case 11:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-sm mx-auto">
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Metr (m)</label>
+                                <input type="number" id="unitM" value="1" oninput="unitConv('m')" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Kilometr (km)</label>
+                                <input type="number" id="unitKm" value="0.001" oninput="unitConv('km')" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Santi-metr (cm)</label>
+                                <input type="number" id="unitCm" value="100" oninput="unitConv('cm')" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                        </div>
+                    `;
+                    window.unitConv = function(type) {
+                        if (type === 'm') {
+                            const val = parseFloat(document.getElementById('unitM').value) || 0;
+                            document.getElementById('unitKm').value = val / 1000;
+                            document.getElementById('unitCm').value = val * 100;
+                        } else if (type === 'km') {
+                            const val = parseFloat(document.getElementById('unitKm').value) || 0;
+                            document.getElementById('unitM').value = val * 1000;
+                            document.getElementById('unitCm').value = val * 100000;
+                        } else if (type === 'cm') {
+                            const val = parseFloat(document.getElementById('unitCm').value) || 0;
+                            document.getElementById('unitM').value = val / 100;
+                            document.getElementById('unitKm').value = val / 100000;
+                        }
+                    };
+                    break;
+
+                // 12. Tasodifiy Generator
+                case 12:
+                    container.innerHTML = `
+                        <div class="space-y-6 text-center max-w-sm mx-auto">
+                            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400 block mb-2">Tanga tashlash</span>
+                                <div id="coinResult" class="text-4xl font-bold text-amber-400 my-2">🪙</div>
+                                <button onclick="flipCoin()" class="bg-slate-800 hover:bg-slate-700 text-xs text-white px-4 py-2 rounded-xl border border-slate-700">Tanga tashlash</button>
+                            </div>
+                            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400 block mb-2">Tasodifiy Raqam (1-100)</span>
+                                <div id="randNum" class="text-3xl font-bold text-brand-400 my-2">--</div>
+                                <button onclick="genRandNum()" class="bg-brand-600 hover:bg-brand-500 text-xs text-white px-4 py-2 rounded-xl">Raqam aniqlash</button>
+                            </div>
+                        </div>
+                    `;
+                    window.flipCoin = function() {
+                        const res = Math.random() < 0.5 ? "O'ng (Erbash)" : "Teskari (Raqam)";
+                        document.getElementById('coinResult').innerText = res;
+                    };
+                    window.genRandNum = function() {
+                        document.getElementById('randNum').innerText = Math.floor(Math.random() * 100) + 1;
+                    };
+                    break;
+
+                // 13. Vaqt Mintaqasi Soati
+                case 13:
+                    container.innerHTML = `
+                        <div class="grid grid-cols-2 gap-3" id="worldClockGrid">
+                            <!-- Injected -->
+                        </div>
+                    `;
+                    window.updateWorldClocks = function() {
+                        const cities = [
+                            { name: "Toshkent", tz: "Asia/Tashkent" },
+                            { name: "Nyu-York", tz: "America/New_York" },
+                            { name: "London", tz: "Europe/London" },
+                            { name: "Tokio", tz: "Asia/Tokyo" }
+                        ];
+                        const grid = document.getElementById('worldClockGrid');
+                        if(!grid) return;
+                        grid.innerHTML = '';
+                        cities.forEach(c => {
+                            const timeStr = new Date().toLocaleTimeString("uz-UZ", { timeZone: c.tz });
+                            grid.innerHTML += `
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                                    <span class="text-xs text-slate-400 block mb-1">${c.name}</span>
+                                    <span class="text-xl font-mono font-bold text-brand-400">${timeStr}</span>
+                                </div>
+                            `;
+                        });
+                    };
+                    window.updateWorldClocks();
+                    window.clockInt = setInterval(window.updateWorldClocks, 1000);
+                    break;
+
+                // 14. Tikon-Nol O'yini
+                case 14:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-xs mx-auto text-center">
+                            <div class="text-sm font-semibold text-slate-300" id="tttStatus">Navbat: <span class="text-brand-400">X</span></div>
+                            <div class="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                                ${Array(9).fill(0).map((_, i) => `<button onclick="playTTT(${i})" id="ttt-${i}" class="h-20 bg-slate-900 rounded-xl text-3xl font-bold text-white hover:bg-slate-850 flex items-center justify-center"></button>`).join('')}
+                            </div>
+                            <button onclick="resetTTT()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs border border-slate-700">Qayta boshlash</button>
+                        </div>
+                    `;
+                    let tttBoard = Array(9).fill(null);
+                    let tttTurn = 'X';
+                    window.playTTT = function(i) {
+                        if (tttBoard[i] || checkTTTWinner()) return;
+                        tttBoard[i] = tttTurn;
+                        document.getElementById(`ttt-${i}`).innerText = tttTurn;
+                        document.getElementById(`ttt-${i}`).classList.add(tttTurn === 'X' ? 'text-brand-400' : 'text-emerald-400');
+                        if (checkTTTWinner()) {
+                            document.getElementById('tttStatus').innerText = `G'olib: ${tttTurn}! 🎉`;
+                        } else if (tttBoard.every(Boolean)) {
+                            document.getElementById('tttStatus').innerText = "Durang! 🤝";
+                        } else {
+                            tttTurn = tttTurn === 'X' ? 'O' : 'X';
+                            document.getElementById('tttStatus').innerHTML = `Navbat: <span class="${tttTurn === 'X' ? 'text-brand-400' : 'text-emerald-400'}">${tttTurn}</span>`;
+                        }
+                    };
+                    function checkTTTWinner() {
+                        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+                        return lines.some(([a,b,c]) => tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]);
+                    }
+                    window.resetTTT = function() {
+                        tttBoard = Array(9).fill(null);
+                        tttTurn = 'X';
+                        for(let i=0; i<9; i++) document.getElementById(`ttt-${i}`).innerText = '';
+                        document.getElementById('tttStatus').innerHTML = `Navbat: <span class="text-brand-400">X</span>`;
+                    };
+                    break;
+
+                // 15. Xotira Testi O'yini
+                case 15:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-sm mx-auto text-center">
+                            <div class="grid grid-cols-4 gap-2 bg-slate-950 p-3 rounded-2xl border border-slate-800" id="memGrid">
+                                <!-- Cards -->
+                            </div>
+                            <button onclick="initMemGame()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs border border-slate-700">Yangi O'yin</button>
+                        </div>
+                    `;
+                    const emojis = ['🚀', '🚀', '💻', '💻', '🔥', '🔥', '🎯', '🎯'];
+                    let flipped = [], matched = [];
+                    window.initMemGame = function() {
+                        flipped = []; matched = [];
+                        const shuffled = [...emojis].sort(() => Math.random() - 0.5);
+                        const grid = document.getElementById('memGrid');
+                        grid.innerHTML = '';
+                        shuffled.forEach((emo, i) => {
+                            grid.innerHTML += `<button onclick="flipMemCard(${i}, '${emo}')" id="mem-${i}" class="h-16 bg-slate-900 rounded-xl text-2xl flex items-center justify-center border border-slate-800">❓</button>`;
+                        });
+                    };
+                    window.flipMemCard = function(i, emo) {
+                        if (flipped.length >= 2 || flipped.some(f => f.i === i) || matched.includes(i)) return;
+                        document.getElementById(`mem-${i}`).innerText = emo;
+                        flipped.push({ i, emo });
+                        if (flipped.length === 2) {
+                            if (flipped[0].emo === flipped[1].emo) {
+                                matched.push(flipped[0].i, flipped[1].i);
+                                flipped = [];
+                                if (matched.length === emojis.length) showToast("Tabriklaymiz! Barchasini topdingiz! 🎉");
+                            } else {
+                                setTimeout(() => {
+                                    document.getElementById(`mem-${flipped[0].i}`).innerText = '❓';
+                                    document.getElementById(`mem-${flipped[1].i}`).innerText = '❓';
+                                    flipped = [];
+                                }, 700);
+                            }
+                        }
+                    };
+                    window.initMemGame();
+                    break;
+
+                // 16. Markdown Muharriri
+                case 16:
+                    container.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-72">
+                            <textarea id="mdInput" oninput="renderMD()" class="bg-slate-950 border border-slate-800 text-white p-3 rounded-xl font-mono text-xs focus:outline-none" placeholder="# Sarlavha\nMatn kiriting..."></textarea>
+                            <div id="mdOutput" class="bg-slate-950 border border-slate-800 p-3 rounded-xl overflow-y-auto text-xs text-slate-200 prose prose-invert"></div>
+                        </div>
+                    `;
+                    window.renderMD = function() {
+                        const txt = document.getElementById('mdInput').value;
+                        document.getElementById('mdOutput').innerHTML = marked.parse(txt);
+                    };
+                    window.renderMD();
+                    break;
+
+                // 17. Matndan Ovoz
+                case 17:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-md mx-auto">
+                            <textarea id="ttsText" rows="4" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl text-sm" placeholder="Ovozli o'qilishi kerak bo'lgan matnni yozing..."></textarea>
+                            <button onclick="speakText()" class="w-full bg-brand-600 hover:bg-brand-500 text-white py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-volume-high"></i> O'qib berish
+                            </button>
+                        </div>
+                    `;
+                    window.speakText = function() {
+                        const txt = document.getElementById('ttsText').value;
+                        if (!txt) return;
+                        const utterance = new SpeechSynthesisUtterance(txt);
+                        window.speechSynthesis.speak(utterance);
+                    };
+                    break;
+
+                // 18. Chiqim & Daromad
+                case 18:
+                    container.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-3 text-center">
+                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                    <span class="text-xs text-slate-400 block">Jami Balans</span>
+                                    <span id="expBalance" class="text-xl font-bold text-emerald-400">0 so'm</span>
+                                </div>
+                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                    <span class="text-xs text-slate-400 block">Operatsiyalar</span>
+                                    <span id="expCount" class="text-xl font-bold text-brand-400">0 ta</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" id="expDesc" placeholder="Nomi" class="flex-1 bg-slate-950 border border-slate-800 text-white p-2 text-xs rounded-xl">
+                                <input type="number" id="expAmt" placeholder="Summa" class="w-24 bg-slate-950 border border-slate-800 text-white p-2 text-xs rounded-xl">
+                                <button onclick="addExp()" class="bg-brand-600 hover:bg-brand-500 text-white px-3 rounded-xl text-xs font-semibold">Qo'shish</button>
+                            </div>
+                            <div id="expList" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    `;
+                    window.getExp = () => JSON.parse(localStorage.getItem('app_exp') || '[]');
+                    window.renderExp = function() {
+                        const exps = window.getExp();
+                        let total = 0;
+                        const list = document.getElementById('expList');
+                        list.innerHTML = '';
+                        exps.forEach((item, i) => {
+                            total += item.amt;
+                            list.innerHTML += `
+                                <div class="flex justify-between items-center bg-slate-800/40 p-2 rounded-lg border border-slate-700/40 text-xs">
+                                    <span class="text-slate-200">${item.desc}</span>
+                                    <span class="font-bold text-emerald-400">+${item.amt.toLocaleString()} so'm</span>
+                                </div>
+                            `;
+                        });
+                        document.getElementById('expBalance').innerText = total.toLocaleString() + " so'm";
+                        document.getElementById('expCount').innerText = exps.length + " ta";
+                    };
+                    window.addExp = function() {
+                        const desc = document.getElementById('expDesc').value;
+                        const amt = parseFloat(document.getElementById('expAmt').value);
+                        if (!desc || !amt) return;
+                        const exps = window.getExp();
+                        exps.push({ desc, amt });
+                        localStorage.setItem('app_exp', JSON.stringify(exps));
+                        document.getElementById('expDesc').value = '';
+                        document.getElementById('expAmt').value = '';
+                        window.renderExp();
+                    };
+                    window.renderExp();
+                    break;
+
+                // 19. Chegirma Hisoblagich
+                case 19:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-sm mx-auto">
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Asl Narx</label>
+                                <input type="number" id="discPrice" value="100000" oninput="calcDisc()" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Chegirma Foizi (%)</label>
+                                <input type="number" id="discPercent" value="20" oninput="calcDisc()" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl">
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center space-y-1">
+                                <span class="text-xs text-slate-400 block">Yangi Narx:</span>
+                                <span id="discFinal" class="text-2xl font-bold text-emerald-400">80,000 so'm</span>
+                                <span id="discSaved" class="text-xs text-slate-400 block">Tejalgan pul: 20,000 so'm</span>
+                            </div>
+                        </div>
+                    `;
+                    window.calcDisc = function() {
+                        const price = parseFloat(document.getElementById('discPrice').value) || 0;
+                        const percent = parseFloat(document.getElementById('discPercent').value) || 0;
+                        const saved = (price * percent) / 100;
+                        const finalPrice = price - saved;
+                        document.getElementById('discFinal').innerText = finalPrice.toLocaleString() + " so'm";
+                        document.getElementById('discSaved').innerText = "Tejalgan pul: " + saved.toLocaleString() + " so'm";
+                    };
+                    break;
+
+                // 20. JSON Formatter
+                case 20:
+                    container.innerHTML = `
+                        <div class="space-y-3">
+                            <textarea id="jsonInput" rows="5" placeholder='{"name":"Ali","age":25}' class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl font-mono text-xs focus:border-brand-500"></textarea>
+                            <button onclick="formatJSON()" class="w-full bg-brand-600 hover:bg-brand-500 text-white py-2 rounded-xl font-semibold text-xs">Formatlash</button>
+                            <textarea id="jsonOutput" readonly rows="5" placeholder="Natija..." class="w-full bg-slate-950 border border-slate-800 text-emerald-400 p-3 rounded-xl font-mono text-xs"></textarea>
+                        </div>
+                    `;
+                    window.formatJSON = function() {
+                        try {
+                            const raw = document.getElementById('jsonInput').value;
+                            const parsed = JSON.parse(raw);
+                            document.getElementById('jsonOutput').value = JSON.stringify(parsed, null, 4);
+                        } catch {
+                            document.getElementById('jsonOutput').value = "Xato JSON formati!";
+                        }
+                    };
+                    break;
+
+                // 21. Yosh Hisoblagich
+                case 21:
+                    container.innerHTML = `
+                        <div class="space-y-4 max-w-sm mx-auto text-center">
+                            <input type="date" id="ageDate" class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl text-center">
+                            <button onclick="calcAge()" class="w-full bg-brand-600 hover:bg-brand-500 text-white py-2.5 rounded-xl font-semibold">Yoshni Aniqlash</button>
+                            <div id="ageResult" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 text-lg font-bold text-brand-400"></div>
+                        </div>
+                    `;
+                    window.calcAge = function() {
+                        const val = document.getElementById('ageDate').value;
+                        if(!val) return;
+                        const birth = new Date(val);
+                        const diff = new Date() - birth;
+                        const ageYears = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+                        document.getElementById('ageResult').innerText = `Siz ${ageYears} yoshdasiz! 🎉`;
+                        document.getElementById('ageResult').classList.remove('hidden');
+                    };
+                    break;
+
+                // 22. Pomodoro Taymer
+                case 22:
+                    container.innerHTML = `
+                        <div class="text-center space-y-4">
+                            <div class="text-5xl font-mono font-bold text-brand-400 bg-slate-950 py-6 rounded-2xl border border-slate-800" id="pomoTime">25:00</div>
+                            <div class="flex justify-center gap-3">
+                                <button id="pomoBtn" onclick="togglePomo()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-xl font-semibold">Boshlash</button>
+                                <button onclick="resetPomo()" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2 rounded-xl font-semibold">Qayta tiklash</button>
+                            </div>
+                        </div>
+                    `;
+                    let pomoSec = 1500;
+                    let pomoInt = null;
+                    window.togglePomo = function() {
+                        const btn = document.getElementById('pomoBtn');
+                        if (pomoInt) {
+                            clearInterval(pomoInt);
+                            pomoInt = null;
+                            btn.innerText = "Davom ettirish";
+                        } else {
+                            pomoInt = setInterval(() => {
+                                pomoSec--;
+                                const m = Math.floor(pomoSec / 60).toString().padStart(2, '0');
+                                const s = (pomoSec % 60).toString().padStart(2, '0');
+                                document.getElementById('pomoTime').innerText = `${m}:${s}`;
+                                if (pomoSec <= 0) {
+                                    clearInterval(pomoInt);
+                                    showToast("Pomodoro vaqti tugadi! Tanaffus qiling.");
+                                }
+                            }, 1000);
+                            btn.innerText = "Pauza";
+                        }
+                    };
+                    window.resetPomo = function() {
+                        clearInterval(pomoInt);
+                        pomoInt = null;
+                        pomoSec = 1500;
+                        document.getElementById('pomoTime').innerText = "25:00";
+                        document.getElementById('pomoBtn').innerText = "Boshlash";
+                    };
+                    break;
+
+                // 23. Yozish Tezligi Testi
+                case 23:
+                    container.innerHTML = `
+                        <div class="space-y-4 text-center">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-300 font-mono text-sm leading-relaxed" id="typingSample">
+                                fast code builds clean applications with great performance and design
+                            </div>
+                            <textarea id="typingInput" oninput="checkTyping()" placeholder="Yuqoridagi matnni yozishni boshlang..." class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl text-sm font-mono"></textarea>
+                            <div class="text-brand-400 font-bold" id="wpmResult">WPM: 0</div>
+                        </div>
+                    `;
+                    let typingStart = null;
+                    window.checkTyping = function() {
+                        if(!typingStart) typingStart = Date.now();
+                        const sample = document.getElementById('typingSample').innerText.trim();
+                        const val = document.getElementById('typingInput').value;
+                        const elapsed = (Date.now() - typingStart) / 60000;
+                        const words = val.trim().split(/\s+/).length;
+                        const wpm = Math.round(words / elapsed) || 0;
+                        document.getElementById('wpmResult').innerText = `Tezlik: ${wpm} WPM`;
+                    };
+                    break;
+
+                // 24. Base64 Enkoder
+                case 24:
+                    container.innerHTML = `
+                        <div class="space-y-3">
+                            <textarea id="b64Input" rows="3" placeholder="Matn..." class="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-xl text-xs"></textarea>
+                            <div class="flex gap-2">
+                                <button onclick="b64Enc()" class="flex-1 bg-brand-600 text-white py-2 rounded-xl text-xs font-semibold">Encode (Kodlash)</button>
+                                <button onclick="b64Dec()" class="flex-1 bg-slate-800 text-white py-2 rounded-xl text-xs font-semibold">Decode (Ochish)</button>
+                            </div>
+                            <textarea id="b64Output" readonly rows="3" placeholder="Natija..." class="w-full bg-slate-950 border border-slate-800 text-emerald-400 p-3 rounded-xl text-xs font-mono"></textarea>
+                        </div>
+                    `;
+                    window.b64Enc = function() {
+                        const val = document.getElementById('b64Input').value;
+                        document.getElementById('b64Output').value = btoa(val);
+                    };
+                    window.b64Dec = function() {
+                        try {
+                            const val = document.getElementById('b64Input').value;
+                            document.getElementById('b64Output').value = atob(val);
+                        } catch {
+                            document.getElementById('b64Output').value = "Xato Base64 formati!";
+                        }
+                    };
+                    break;
+
+                // 25. Kunlik Iqtiboslar
+                case 25:
+                    container.innerHTML = `
+                        <div class="space-y-4 text-center max-w-md mx-auto">
+                            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 italic text-slate-200" id="quoteBox">
+                                "Muvaffaqiyat — kichik qadamlarning har kuni takrorlanishidir."
+                            </div>
+                            <button onclick="nextQuote()" class="bg-brand-600 hover:bg-brand-500 text-white px-5 py-2.5 rounded-xl font-semibold text-xs">Yangi Iqtibos</button>
+                        </div>
+                    `;
+                    const quotes = [
+                        "Muvaffaqiyat — kichik qadamlarning har kuni takrorlanishidir.",
+                        "Vaqtingizni boshqalar hayoti bilan yashashga sarflamang.",
+                        "Kelajakni bashorat qilishning eng yaxshi usuli — uni yaratishdir.",
+                        "Bilim — bu kuch, lekin amaliyot — bu natija!"
+                    ];
+                    window.nextQuote = function() {
+                        const q = quotes[Math.floor(Math.random() * quotes.length)];
+                        document.getElementById('quoteBox').innerText = `"${q}"`;
+                    };
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

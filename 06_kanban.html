@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kanban</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+@media(max-width:700px){#board{grid-template-columns:1fr!important}}</style></head><body><div class="wrap">
+<div class="hero"><h1>📋 Kanban</h1><p>Ustunlar bo'yicha vazifalar</p></div>
+<div class="card"><div class="row"><input id="task" placeholder="Vazifa..." style="margin:0"><select id="col" style="margin:0;max-width:130px"><option value="todo">Qilish</option><option value="doing">Jarayonda</option><option value="done">Tugadi</option></select><button onclick="add()" style="flex:0 0 auto">+</button></div></div>
+<div class="grid" id="board" style="grid-template-columns:repeat(3,1fr)"></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let tasks=JSON.parse(localStorage.getItem("kanban2")||"[]");
+const cols={todo:"Qilish",doing:"Jarayonda",done:"Tugadi"},colors={todo:"#f59e0b",doing:"#3b82f6",done:"#22c55e"};
+function save(){localStorage.setItem("kanban2",JSON.stringify(tasks));render()}
+function add(){const t=document.getElementById("task").value.trim();if(!t)return;tasks.push({id:Date.now(),text:t,col:document.getElementById("col").value});document.getElementById("task").value="";save()}
+function move(id,col){tasks=tasks.map(t=>t.id===id?{...t,col}:t);save()}
+function del(id){tasks=tasks.filter(t=>t.id!==id);save()}
+function render(){document.getElementById("board").innerHTML=Object.keys(cols).map(col=>{const items=tasks.filter(t=>t.col===col);
+return `<div class="card" style="padding:14px;border-top:3px solid ${colors[col]}"><h2 style="font-size:.95rem">${cols[col]} <span class="pill">${items.length}</span></h2>
+${items.map(t=>`<div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px;margin-bottom:8px"><div style="margin-bottom:8px">${t.text}</div><div style="display:flex;gap:4px;flex-wrap:wrap">
+${col!=="todo"?`<button class="sec" style="padding:3px 8px;font-size:.7rem" onclick="move(${t.id},'todo')">←</button>`:""}
+${col!=="doing"?`<button class="sec" style="padding:3px 8px;font-size:.7rem" onclick="move(${t.id},'doing')">→</button>`:""}
+${col!=="done"?`<button class="sec" style="padding:3px 8px;font-size:.7rem" onclick="move(${t.id},'done')">✓</button>`:""}
+<button class="danger" style="padding:3px 8px;font-size:.7rem" onclick="del(${t.id})">×</button></div></div>`).join("")||'<p class="muted" style="font-size:.85rem">Bo\'sh</p>'}</div>`}).join("")}
+render();document.getElementById("task").onkeypress=e=>{if(e.key==="Enter")add()};
+</script></body></html>

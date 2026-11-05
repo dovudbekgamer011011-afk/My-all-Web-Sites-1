@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VizitkaPro - Raqamli vizitkalar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-id-card text-emerald-600 text-2xl"></i>
+                <span class="text-xl font-bold text-emerald-600">VizitkaPro</span>
+            </div>
+            <button onclick="showCreate()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700">
+                Vizitka yaratish
+            </button>
+        </div>
+    </header>
+
+    <section class="bg-gradient-to-br from-emerald-500 to-teal-700 text-white py-16">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Raqamli vizitkangizni yarating</h1>
+            <p class="text-xl text-emerald-100 mb-8">Bir necha daqiqada chiroyli onlayn vizitka</p>
+            <button onclick="showCreate()" class="bg-white text-emerald-700 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-emerald-50">
+                Hozir yaratish
+            </button>
+        </div>
+    </section>
+
+    <section id="createSection" class="hidden py-10">
+        <div class="max-w-4xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm">
+                <h2 class="text-xl font-bold mb-4">Ma’lumotlaringiz</h2>
+                <div class="space-y-3">
+                    <input id="vName" type="text" placeholder="Ism familiya" class="w-full px-4 py-2 border rounded-lg" oninput="updatePreview()">
+                    <input id="vJob" type="text" placeholder="Kasb / Lavozim" class="w-full px-4 py-2 border rounded-lg" oninput="updatePreview()">
+                    <input id="vPhone" type="tel" placeholder="Telefon" class="w-full px-4 py-2 border rounded-lg" oninput="updatePreview()">
+                    <input id="vEmail" type="email" placeholder="Email" class="w-full px-4 py-2 border rounded-lg" oninput="updatePreview()">
+                    <input id="vAddress" type="text" placeholder="Manzil" class="w-full px-4 py-2 border rounded-lg" oninput="updatePreview()">
+                    <input id="vTelegram" type="text" placeholder="Telegram (@username)" class="w-full px-4 py-2 border rounded-lg" oninput="updatePreview()">
+                    <select id="vColor" class="w-full px-4 py-2 border rounded-lg" onchange="updatePreview()">
+                        <option value="emerald">Yashil</option>
+                        <option value="blue">Ko‘k</option>
+                        <option value="purple">Binafsha</option>
+                        <option value="rose">Pushti</option>
+                        <option value="amber">Sariq</option>
+                    </select>
+                    <button onclick="saveVizitka()" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700">
+                        Saqlash va ulashish
+                    </button>
+                </div>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold mb-4">Oldindan ko‘rish</h2>
+                <div id="preview" class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div id="previewHeader" class="bg-emerald-600 h-24"></div>
+                    <div class="p-6 text-center -mt-10">
+                        <div class="w-20 h-20 bg-white rounded-full mx-auto flex items-center justify-center shadow-md border-4 border-white">
+                            <i class="fas fa-user text-3xl text-gray-400"></i>
+                        </div>
+                        <h3 id="pName" class="text-xl font-bold mt-3">Ismingiz</h3>
+                        <p id="pJob" class="text-gray-500">Kasbingiz</p>
+                        <div class="mt-4 space-y-2 text-sm text-left">
+                            <p id="pPhone"><i class="fas fa-phone text-emerald-600 w-5"></i> —</p>
+                            <p id="pEmail"><i class="fas fa-envelope text-emerald-600 w-5"></i> —</p>
+                            <p id="pAddress"><i class="fas fa-map-marker-alt text-emerald-600 w-5"></i> —</p>
+                            <p id="pTelegram"><i class="fab fa-telegram text-emerald-600 w-5"></i> —</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="shareBox" class="hidden mt-4 bg-emerald-50 p-4 rounded-xl">
+                    <p class="font-medium mb-2">Vizitkangiz tayyor!</p>
+                    <input id="shareLink" readonly class="w-full px-3 py-2 border rounded-lg text-sm bg-white mb-2">
+                    <button onclick="copyLink()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-sm">Nusxa olish</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8">Saqlangan vizitkalar</h2>
+            <div id="savedList" class="grid sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm">
+        <p>© 2026 VizitkaPro</p>
+    </footer>
+
+    <script>
+        const colors = {
+            emerald: 'bg-emerald-600',
+            blue: 'bg-blue-600',
+            purple: 'bg-purple-600',
+            rose: 'bg-rose-600',
+            amber: 'bg-amber-600'
+        };
+
+        function showCreate() {
+            document.getElementById('createSection').classList.remove('hidden');
+            window.scrollTo({top: 400, behavior: 'smooth'});
+        }
+
+        function updatePreview() {
+            pName.textContent = vName.value || 'Ismingiz';
+            pJob.textContent = vJob.value || 'Kasbingiz';
+            pPhone.innerHTML = `<i class="fas fa-phone text-emerald-600 w-5"></i> ${vPhone.value || '—'}`;
+            pEmail.innerHTML = `<i class="fas fa-envelope text-emerald-600 w-5"></i> ${vEmail.value || '—'}`;
+            pAddress.innerHTML = `<i class="fas fa-map-marker-alt text-emerald-600 w-5"></i> ${vAddress.value || '—'}`;
+            pTelegram.innerHTML = `<i class="fab fa-telegram text-emerald-600 w-5"></i> ${vTelegram.value || '—'}`;
+            
+            const color = vColor.value;
+            previewHeader.className = colors[color] + ' h-24';
+        }
+
+        function saveVizitka() {
+            if (!vName.value) { alert('Ism kiriting!'); return; }
+            const data = {
+                id: Date.now(),
+                name: vName.value,
+                job: vJob.value,
+                phone: vPhone.value,
+                email: vEmail.value,
+                address: vAddress.value,
+                telegram: vTelegram.value,
+                color: vColor.value
+            };
+            let list = JSON.parse(localStorage.getItem('vizitkas') || '[]');
+            list.unshift(data);
+            localStorage.setItem('vizitkas', JSON.stringify(list));
+            
+            const link = location.href.split('?')[0] + '?id=' + data.id;
+            shareLink.value = link;
+            shareBox.classList.remove('hidden');
+            renderSaved();
+        }
+
+        function copyLink() {
+            shareLink.select();
+            document.execCommand('copy');
+            alert('Havola nusxalandi!');
+        }
+
+        function renderSaved() {
+            const list = JSON.parse(localStorage.getItem('vizitkas') || '[]');
+            const c = document.getElementById('savedList');
+            if (!list.length) {
+                c.innerHTML = '<p class="col-span-full text-center text-gray-500">Hali vizitka yo‘q</p>';
+                return;
+            }
+            c.innerHTML = list.map(v => `
+                <div class="bg-white rounded-xl shadow-sm p-4">
+                    <div class="${colors[v.color] || 'bg-emerald-600'} h-12 rounded-t-lg -mx-4 -mt-4 mb-3"></div>
+                    <h3 class="font-bold">${v.name}</h3>
+                    <p class="text-sm text-gray-500">${v.job || ''}</p>
+                    <p class="text-sm mt-2"><i class="fas fa-phone text-emerald-600"></i> ${v.phone || '—'}</p>
+                    <button onclick="deleteVizitka(${v.id})" class="mt-3 text-red-500 text-sm">O‘chirish</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteVizitka(id) {
+            let list = JSON.parse(localStorage.getItem('vizitkas') || '[]');
+            list = list.filter(v => v.id !== id);
+            localStorage.setItem('vizitkas', JSON.stringify(list));
+            renderSaved();
+        }
+
+        renderSaved();
+    </script>
+</body>
+</html>

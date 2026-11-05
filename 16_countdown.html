@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Timer</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+.hidden{display:none}</style></head><body><div class="wrap">
+<div class="hero"><h1>⏳ Timer / Stopwatch</h1><p>Hisoblagich va taymer</p></div>
+<div class="card" style="text-align:center">
+<div class="row" style="justify-content:center;margin-bottom:16px">
+<button class="sec" id="m-sw" onclick="setMode('sw')">Stopwatch</button>
+<button class="sec" id="m-tm" onclick="setMode('tm')">Timer</button>
+</div>
+<div id="display" style="font-size:3.2rem;font-weight:700;font-variant-numeric:tabular-nums">00:00:00</div>
+<div class="row" style="margin-top:20px;justify-content:center">
+<button onclick="start()">Boshlash</button><button class="sec" onclick="pause()">Pauza</button><button class="danger" onclick="reset()">Reset</button>
+</div>
+<div id="timerSetup" class="hidden" style="margin-top:16px">
+<label>Daqiqa</label><input type="number" id="mins" value="5" min="1">
+</div>
+</div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let mode="sw",ms=0,running=false,interval=null,target=0;
+function fmt(m){const s=Math.floor(m/1000),h=Math.floor(s/3600),mi=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0")+":"+String(sec).padStart(2,"0")}
+function setMode(m){mode=m;reset();document.getElementById("m-sw").style.background=m==="sw"?"linear-gradient(135deg,#8b5cf6,#3b82f6)":"";document.getElementById("m-tm").style.background=m==="tm"?"linear-gradient(135deg,#8b5cf6,#3b82f6)":"";
+document.getElementById("timerSetup").style.display=m==="tm"?"block":"none"}
+function tick(){if(!running)return;if(mode==="sw"){ms+=100;document.getElementById("display").textContent=fmt(ms)}
+else{ms-=100;if(ms<=0){ms=0;running=false;clearInterval(interval);alert("Vaqt tugadi!");}document.getElementById("display").textContent=fmt(ms)}}
+function start(){if(running)return;if(mode==="tm"&&ms<=0){ms=(+document.getElementById("mins").value||5)*60*1000;document.getElementById("display").textContent=fmt(ms)}running=true;if(!interval)interval=setInterval(tick,100)}
+function pause(){running=false}function reset(){running=false;ms=0;document.getElementById("display").textContent="00:00:00"}
+setMode("sw");
+</script></body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI Kalkulyator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;background:#0f0f13;color:#e8e8ed;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:1.85rem;font-weight:700;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:#94a3b8;font-size:.95rem}
+.card{background:rgba(30,30,40,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card h2{font-size:1.1rem;font-weight:600;margin-bottom:16px;color:#f1f5f9}
+label{display:block;font-size:.85rem;color:#94a3b8;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(15,15,20,.6);color:#f1f5f9;font-size:1rem;margin-bottom:14px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#a78bfa}
+button{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,.4)}
+button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+button.danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.8rem;background:rgba(167,139,250,.15);color:#c4b5fd}
+.muted{color:#94a3b8;font-size:.9rem}
+.success{color:#4ade80}
+.result{font-size:2rem;font-weight:700;text-align:center;padding:16px;word-break:break-all}
+footer{text-align:center;color:#64748b;font-size:.8rem;margin-top:40px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero"><h1>⚖️ BMI Kalkulyator</h1><p>Tana massa indeksi</p></div>
+<div class="card">
+  <label>Bo'y (sm)</label>
+  <input type="number" id="h" placeholder="170" oninput="calc()">
+  <label>Vazn (kg)</label>
+  <input type="number" id="w" placeholder="70" oninput="calc()">
+</div>
+<div class="card" style="text-align:center">
+  <div class="muted">Sizning BMI</div>
+  <div class="result" id="bmi">—</div>
+  <div id="status" class="pill" style="margin-top:8px"></div>
+  <p class="muted" style="margin-top:16px;font-size:.85rem" id="info"></p>
+</div>
+
+<footer>Ishlaydigan web-sayt · HTML + CSS + JS</footer>
+</div>
+<script>
+function calc(){
+  const h=(+document.getElementById('h').value||0)/100;
+  const w=+document.getElementById('w').value||0;
+  if(!h||!w){document.getElementById('bmi').textContent='—';document.getElementById('status').textContent='';document.getElementById('info').textContent='';return}
+  const bmi=w/(h*h);
+  document.getElementById('bmi').textContent=bmi.toFixed(1);
+  let st,color,info;
+  if(bmi<18.5){st='Kam vazn';color='#38bdf8';info='Sog\'lom vazn oralig\'iga chiqish tavsiya etiladi.'}
+  else if(bmi<25){st='Normal';color='#22c55e';info='Ajoyib! Sog\'lom oralikdasiz.'}
+  else if(bmi<30){st='Ortiqcha vazn';color='#f59e0b';info='Faoliyat va ovqatlanishni ko\'rib chiqing.'}
+  else{st='Semizlik';color='#ef4444';info='Mutaxassis bilan maslahatlashing.'}
+  document.getElementById('status').textContent=st;
+  document.getElementById('status').style.background=color+'22';
+  document.getElementById('status').style.color=color;
+  document.getElementById('info').textContent=info;
+}
+</script>
+</body>
+</html>

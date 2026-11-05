@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kitoblar</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>📚 Kutubxona</h1><p>O'qish ro'yxati va progress</p></div>
+<div class="card"><input id="q" placeholder="Qidirish..." oninput="filt()"></div>
+<div id="books"></div>
+<div class="card"><h2>O'qilayotgan</h2><div id="reading"></div></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let reading=JSON.parse(localStorage.getItem("reading2")||"[]");
+const B=[{id:1,t:"Atomic Habits",a:"James Clear"},{id:2,t:"The Alchemist",a:"Paulo Coelho"},{id:3,t:"Sapiens",a:"Yuval Harari"},{id:4,t:"Deep Work",a:"Cal Newport"},{id:5,t:"1984",a:"George Orwell"},{id:6,t:"O'tkan kunlar",a:"Abdulla Qodiriy"}];
+function filt(){const q=document.getElementById("q").value.toLowerCase();document.getElementById("books").innerHTML=B.filter(b=>b.t.toLowerCase().includes(q)||b.a.toLowerCase().includes(q)).map(b=>`<div class="card"><h3>${b.t}</h3><p class="muted">${b.a}</p><button onclick="start(${b.id})" ${reading.find(r=>r.id===b.id)?"disabled style=\"opacity:.5\"":""}>${reading.find(r=>r.id===b.id)?"O'qilmoqda":"Boshlash"}</button></div>`).join("");rr()}
+function start(id){if(!reading.find(r=>r.id===id)){reading.push({...B.find(x=>x.id===id),p:0});localStorage.setItem("reading2",JSON.stringify(reading));filt()}}
+function setP(id,v){reading=reading.map(r=>r.id===id?{...r,p:+v}:r);localStorage.setItem("reading2",JSON.stringify(reading));rr()}
+function rr(){document.getElementById("reading").innerHTML=reading.length?reading.map(r=>`<div class="list-item"><div style="flex:1"><strong>${r.t}</strong><br><input type="range" min="0" max="100" value="${r.p}" onchange="setP(${r.id},this.value)" style="width:100%;margin-top:6px"> ${r.p}%</div></div>`).join(""):'<p class="muted">Yo\'q</p>'}
+filt();
+</script></body></html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tadbirlar</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>📅 Tadbirlar</h1><p>Yozilish va eslatmalar</p></div>
+<div class="card"><input id="q" placeholder="Qidirish..." oninput="filt()"></div>
+<div id="events"></div>
+<div class="card"><h2>Mening tadbirlarim</h2><div id="my"></div></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let my=JSON.parse(localStorage.getItem("events2")||"[]");
+const E=[{id:1,t:"Jazz Night",d:"2026-11-08",p:"Blue Note Club"},{id:2,t:"Tech Meetup",d:"2026-11-12",p:"Innovation Hub"},{id:3,t:"Art Exhibition",d:"2026-11-15",p:"City Gallery"},{id:4,t:"Startup Pitch",d:"2026-11-20",p:"IT Park"},{id:5,t:"Yoga Morning",d:"2026-11-09",p:"Zen Studio"}];
+function filt(){const q=document.getElementById("q").value.toLowerCase();document.getElementById("events").innerHTML=E.filter(e=>e.t.toLowerCase().includes(q)).map(e=>`<div class="card"><h3>${e.t}</h3><p class="muted">${e.d} · ${e.p}</p><button onclick="join(${e.id})" ${my.includes(e.id)?"disabled style=\"opacity:.5\"":""}>${my.includes(e.id)?"Yozilgan":"Yozilish"}</button></div>`).join("");rm()}
+function join(id){if(!my.includes(id)){my.push(id);localStorage.setItem("events2",JSON.stringify(my));filt()}}
+function rm(){document.getElementById("my").innerHTML=my.length?my.map(id=>{const e=E.find(x=>x.id===id);return `<div class="list-item"><span>${e.t} — ${e.d}</span></div>`}).join(""):'<p class="muted">Yo\'q</p>'}
+filt();
+</script></body></html>

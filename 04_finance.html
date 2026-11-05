@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moliya</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>💰 Moliya</h1><p>Kirim, chiqim, balans</p></div>
+<div class="card">
+<select id="type"><option value="income">Kirim</option><option value="expense">Chiqim</option></select>
+<input id="amount" type="number" step="0.01" placeholder="Summa">
+<input id="cat" placeholder="Kategoriya">
+<input id="note" placeholder="Izoh">
+<button onclick="add()" style="width:100%">Qo'shish</button>
+</div>
+<div class="card"><div class="grid">
+<div class="stat"><div class="muted">Kirim</div><div class="n ok" id="inc">$0</div></div>
+<div class="stat"><div class="muted">Chiqim</div><div class="n danger-t" id="exp">$0</div></div>
+<div class="stat"><div class="muted">Balans</div><div class="n" id="bal">$0</div></div>
+</div></div>
+<div class="card"><h2>Tarix</h2><div id="list"></div></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let tx=JSON.parse(localStorage.getItem("fin2")||"[]");
+function save(){localStorage.setItem("fin2",JSON.stringify(tx));render()}
+function add(){const a=+document.getElementById("amount").value;if(!a)return;tx.unshift({id:Date.now(),type:document.getElementById("type").value,amount:a,cat:document.getElementById("cat").value||"—",note:document.getElementById("note").value||"",date:new Date().toLocaleDateString("uz")});document.getElementById("amount").value="";document.getElementById("cat").value="";document.getElementById("note").value="";save()}
+function del(id){tx=tx.filter(t=>t.id!==id);save()}
+function render(){let inc=0,exp=0;tx.forEach(t=>t.type==="income"?inc+=t.amount:exp+=t.amount);
+document.getElementById("inc").textContent="$"+inc.toFixed(2);document.getElementById("exp").textContent="$"+exp.toFixed(2);document.getElementById("bal").textContent="$"+(inc-exp).toFixed(2);
+document.getElementById("list").innerHTML=tx.length?tx.map(t=>`<div class="list-item"><div style="flex:1"><strong>${t.cat}</strong> <span class="muted">${t.date}</span><div class="muted">${t.note}</div></div><span style="color:${t.type==="income"?"#22c55e":"#ef4444"};font-weight:600">${t.type==="income"?"+":"-"}$${t.amount.toFixed(2)}</span><button class="danger" style="padding:6px 10px" onclick="del(${t.id})">×</button></div>`).join(""):'<div class="empty">Yo\'q</div>'}
+render();
+</script></body></html>

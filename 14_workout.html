@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mashqlar</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>💪 Mashqlar</h1><p>Kundalik mashq va statistika</p></div>
+<div class="card"><label>Mashq turi</label>
+<select id="wtype" onchange="load()"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="cardio">Cardio</option></select>
+<div id="wo"></div><button onclick="complete()" style="width:100%;margin-top:12px">Yakunlash</button><p id="msg" class="ok" style="margin-top:8px"></p></div>
+<div class="card"><div class="grid">
+<div class="stat"><div class="muted">Seriya</div><div class="n" id="st">0</div></div>
+<div class="stat"><div class="muted">Jami</div><div class="n" id="tot">0</div></div>
+<div class="stat"><div class="muted">Kaloriya</div><div class="n" id="cal">0</div></div>
+</div></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+const W={push:[{n:"Bench Press",s:"4×8"},{n:"OHP",s:"3×10"},{n:"Dips",s:"3×12"}],pull:[{n:"Pull-ups",s:"4×8"},{n:"Row",s:"3×10"},{n:"Curl",s:"3×12"}],legs:[{n:"Squat",s:"4×8"},{n:"RDL",s:"3×10"},{n:"Lunges",s:"3×12"}],cardio:[{n:"Run",s:"30 daq"},{n:"Jump rope",s:"10 daq"},{n:"Burpees",s:"3×15"}]};
+let stats=JSON.parse(localStorage.getItem("fit2")||'{"streak":0,"total":0,"cal":0}');
+function load(){document.getElementById("wo").innerHTML=W[document.getElementById("wtype").value].map(x=>`<div class="list-item"><strong>${x.n}</strong><span class="muted">${x.s}</span></div>`).join("")}
+function complete(){stats.total++;stats.streak++;stats.cal+=Math.floor(Math.random()*150)+250;localStorage.setItem("fit2",JSON.stringify(stats));upd();document.getElementById("msg").textContent="Saqlandi!"}
+function upd(){document.getElementById("st").textContent=stats.streak;document.getElementById("tot").textContent=stats.total;document.getElementById("cal").textContent=stats.cal}
+load();upd();
+</script></body></html>

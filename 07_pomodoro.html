@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pomodoro</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>⏱️ Pomodoro</h1><p>Fokus + tanaffus</p></div>
+<div class="card" style="text-align:center">
+<div id="mode" class="pill" style="margin-bottom:12px">Fokus</div>
+<div id="timer" style="font-size:3.5rem;font-weight:700">25:00</div>
+<div class="row" style="margin-top:20px;justify-content:center">
+<button onclick="start()">Boshlash</button><button class="sec" onclick="pause()">Pauza</button><button class="danger" onclick="reset()">Reset</button>
+</div>
+<div class="grid" style="margin-top:20px">
+<div class="stat"><div class="muted">Sessiyalar</div><div class="n" id="sessions">0</div></div>
+<div class="stat"><div class="muted">Jami fokus</div><div class="n" id="total">0 daq</div></div>
+</div></div>
+<div class="card"><h2>Vazifalar</h2>
+<div class="row"><input id="task" placeholder="Vazifa..." style="margin:0"><button onclick="addT()" style="flex:0 0 auto">+</button></div>
+<ul id="tlist" style="list-style:none;margin-top:12px"></ul></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let left=25*60,mode="focus",running=false,interval=null;
+let stats=JSON.parse(localStorage.getItem("pomStats")||'{"sessions":0,"total":0}');
+let tasks=JSON.parse(localStorage.getItem("pomTasks")||"[]");
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function tick(){if(!running)return;left--;document.getElementById("timer").textContent=fmt(left);
+if(left<=0){running=false;clearInterval(interval);if(mode==="focus"){stats.sessions++;stats.total+=25;localStorage.setItem("pomStats",JSON.stringify(stats));updStats();mode="break";left=5*60;document.getElementById("mode").textContent="Tanaffus";alert("Tanaffus!")}else{mode="focus";left=25*60;document.getElementById("mode").textContent="Fokus"}document.getElementById("timer").textContent=fmt(left)}}
+function start(){if(running)return;running=true;if(!interval)interval=setInterval(tick,1000)}
+function pause(){running=false}function reset(){running=false;mode="focus";left=25*60;document.getElementById("mode").textContent="Fokus";document.getElementById("timer").textContent=fmt(left)}
+function updStats(){document.getElementById("sessions").textContent=stats.sessions;document.getElementById("total").textContent=stats.total+" daq"}
+function addT(){const v=document.getElementById("task").value.trim();if(!v)return;tasks.push({id:Date.now(),text:v,done:false});localStorage.setItem("pomTasks",JSON.stringify(tasks));document.getElementById("task").value="";renderT()}
+function togT(id){tasks=tasks.map(t=>t.id===id?{...t,done:!t.done}:t);localStorage.setItem("pomTasks",JSON.stringify(tasks));renderT()}
+function delT(id){tasks=tasks.filter(t=>t.id!==id);localStorage.setItem("pomTasks",JSON.stringify(tasks));renderT()}
+function renderT(){document.getElementById("tlist").innerHTML=tasks.map(t=>`<li class="list-item"><input type="checkbox" ${t.done?"checked":""} onchange="togT(${t.id})" style="width:18px"><span style="flex:1;${t.done?"text-decoration:line-through;color:#64748b":""}">${t.text}</span><button class="danger" style="padding:4px 8px" onclick="delT(${t.id})">×</button></li>`).join("")}
+updStats();renderT();
+</script></body></html>

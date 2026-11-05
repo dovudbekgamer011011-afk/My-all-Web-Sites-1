@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DehqonBozor - Mahalliy mahsulotlar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-lime-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <i class="fas fa-leaf text-lime-600 text-2xl"></i>
+                <span class="text-xl font-bold text-lime-600">DehqonBozor</span>
+            </div>
+            <button onclick="showCart()" class="bg-lime-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-lime-700 relative">
+                Savat <span id="cartCount" class="ml-1 bg-white text-lime-700 rounded-full px-2 text-xs">0</span>
+            </button>
+        </div>
+    </header>
+
+    <div id="page-home">
+        <section class="bg-gradient-to-r from-lime-600 to-green-700 text-white py-14">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h1 class="text-4xl font-bold mb-4">Dehqondan to‘g‘ridan-to‘g‘ri</h1>
+                <p class="text-xl text-lime-100 mb-6">Yangi va toza mahsulotlar</p>
+                <input id="searchInput" type="text" placeholder="Mahsulot qidirish..." 
+                       class="px-4 py-3 rounded-lg text-gray-800 w-full max-w-md"
+                       onkeyup="filterProducts()">
+            </div>
+        </section>
+
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex gap-2 mb-6 overflow-x-auto">
+                    <button onclick="filterCat('')" class="cat-btn px-4 py-2 rounded-full bg-lime-600 text-white text-sm whitespace-nowrap">Barchasi</button>
+                    <button onclick="filterCat('Meva')" class="cat-btn px-4 py-2 rounded-full bg-white text-gray-700 text-sm whitespace-nowrap">Meva</button>
+                    <button onclick="filterCat('Sabzavot')" class="cat-btn px-4 py-2 rounded-full bg-white text-gray-700 text-sm whitespace-nowrap">Sabzavot</button>
+                    <button onclick="filterCat('Ko‘kat')" class="cat-btn px-4 py-2 rounded-full bg-white text-gray-700 text-sm whitespace-nowrap">Ko‘kat</button>
+                </div>
+                <div id="products" class="grid sm:grid-cols-2 md:grid-cols-4 gap-5"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-cart" class="hidden">
+        <section class="py-10">
+            <div class="max-w-xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6">Savat</h2>
+                <div id="cartItems" class="space-y-3 mb-6"></div>
+                <div class="bg-white p-4 rounded-xl shadow-sm">
+                    <div class="flex justify-between font-bold text-lg mb-4">
+                        <span>Jami:</span>
+                        <span id="cartTotal">0 so‘m</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-lime-600 text-white py-3 rounded-lg font-semibold hover:bg-lime-700">Buyurtma berish</button>
+                </div>
+                <div id="checkoutSuccess" class="hidden mt-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-center">
+                    <i class="fas fa-check-circle text-2xl mb-2"></i>
+                    <p class="font-semibold">Buyurtma qabul qilindi!</p>
+                    <p class="text-sm">Tez orada yetkazib beramiz.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-10"><p>© 2026 DehqonBozor</p></footer>
+
+    <script>
+        const products = [
+            {id:1, name:"Olma (qizil)", cat:"Meva", price:12000, unit:"kg", farm:"Farg‘ona"},
+            {id:2, name:"Sabzi", cat:"Sabzavot", price:5000, unit:"kg", farm:"Samarqand"},
+            {id:3, name:"Limon", cat:"Meva", price:18000, unit:"kg", farm:"Surxondaryo"},
+            {id:4, name:"Ko‘katlar to‘plami", cat:"Ko‘kat", price:8000, unit:"dona", farm:"Toshkent"},
+            {id:5, name:"Pomidor", cat:"Sabzavot", price:9000, unit:"kg", farm:"Andijon"},
+            {id:6, name:"Banan", cat:"Meva", price:22000, unit:"kg", farm:"Import"},
+            {id:7, name:"Kartoshka", cat:"Sabzavot", price:4000, unit:"kg", farm:"Jizzax"},
+            {id:8, name:"Ukrop + kashnich", cat:"Ko‘kat", price:5000, unit:"dona", farm:"Toshkent"}
+        ];
+        let cart = JSON.parse(localStorage.getItem('dehqon_cart')||'[]');
+        let currentCat = '';
+
+        function showPage(p) {
+            document.getElementById('page-home').classList.add('hidden');
+            document.getElementById('page-cart').classList.add('hidden');
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p==='cart') renderCart();
+        }
+
+        function filterCat(cat) {
+            currentCat = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = 'cat-btn px-4 py-2 rounded-full text-sm whitespace-nowrap ' + 
+                    (b.textContent.includes(cat||'Barchasi') || (cat==='' && b.textContent==='Barchasi') ? 'bg-lime-600 text-white' : 'bg-white text-gray-700');
+            });
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const q = (searchInput?.value || '').toLowerCase();
+            let list = products.filter(p => 
+                (!currentCat || p.cat === currentCat) &&
+                (!q || p.name.toLowerCase().includes(q))
+            );
+            renderProducts(list);
+        }
+
+        function renderProducts(list) {
+            const c = document.getElementById('products');
+            c.innerHTML = list.map(p => `
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <div class="h-28 bg-gradient-to-br from-lime-100 to-green-100 flex items-center justify-center">
+                        <i class="fas fa-apple-alt text-4xl text-lime-500"></i>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold">${p.name}</h3>
+                        <p class="text-sm text-gray-500">${p.farm}</p>
+                        <p class="text-lime-600 font-bold mt-1">${p.price.toLocaleString()} so‘m/${p.unit}</p>
+                        <button onclick="addToCart(${p.id})" class="mt-3 w-full bg-lime-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-lime-700">
+                            Savatga
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const p = products.find(x=>x.id===id);
+            const existing = cart.find(x=>x.id===id);
+            if(existing) existing.qty++;
+            else cart.push({...p, qty:1});
+            localStorage.setItem('dehqon_cart', JSON.stringify(cart));
+            updateCartCount();
+            alert(p.name + ' savatga qo‘shildi!');
+        }
+
+        function updateCartCount() {
+            cartCount.textContent = cart.reduce((s,i)=>s+i.qty, 0);
+        }
+
+        function showCart() {
+            showPage('cart');
+            checkoutSuccess.classList.add('hidden');
+        }
+
+        function renderCart() {
+            const c = document.getElementById('cartItems');
+            if(!cart.length){
+                c.innerHTML = '<p class="text-center text-gray-500 py-6">Savat bo‘sh</p>';
+                cartTotal.textContent = '0 so‘m';
+                return;
+            }
+            c.innerHTML = cart.map((item,i) => `
+                <div class="bg-white p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                        <h3 class="font-medium">${item.name}</h3>
+                        <p class="text-sm text-gray-500">${item.price.toLocaleString()} × ${item.qty}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="changeQty(${i},-1)" class="w-8 h-8 bg-gray-100 rounded-full">-</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeQty(${i},1)" class="w-8 h-8 bg-gray-100 rounded-full">+</button>
+                    </div>
+                </div>
+            `).join('');
+            const total = cart.reduce((s,i)=>s+i.price*i.qty, 0);
+            cartTotal.textContent = total.toLocaleString() + ' so‘m';
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if(cart[index].qty <= 0) cart.splice(index,1);
+            localStorage.setItem('dehqon_cart', JSON.stringify(cart));
+            updateCartCount();
+            renderCart();
+        }
+
+        function checkout() {
+            if(!cart.length) return alert('Savat bo‘sh!');
+            localStorage.setItem('dehqon_orders', JSON.stringify([...(JSON.parse(localStorage.getItem('dehqon_orders')||'[]')), {items:cart, date:new Date().toLocaleString('uz-UZ')}]));
+            cart = [];
+            localStorage.setItem('dehqon_cart', '[]');
+            updateCartCount();
+            cartItems.innerHTML = '';
+            cartTotal.textContent = '0 so‘m';
+            checkoutSuccess.classList.remove('hidden');
+        }
+
+        updateCartCount();
+        filterProducts();
+    </script>
+</body>
+</html>

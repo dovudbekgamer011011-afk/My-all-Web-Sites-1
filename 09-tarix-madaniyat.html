@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TarixUZ - O‘zbekiston tarixi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-amber-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <i class="fas fa-landmark text-amber-700 text-2xl"></i>
+                <span class="text-xl font-bold text-amber-700">TarixUZ</span>
+            </div>
+            <nav class="flex gap-4 text-sm font-medium">
+                <a href="#" onclick="showPage('topics')" class="hover:text-amber-700">Mavzular</a>
+                <a href="#" onclick="showPage('quiz')" class="hover:text-amber-700">Test</a>
+            </nav>
+        </div>
+    </header>
+
+    <div id="page-home">
+        <section class="bg-gradient-to-r from-amber-700 to-yellow-800 text-white py-16">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">O‘zbekiston tarixi va madaniyati</h1>
+                <p class="text-xl text-amber-100 mb-8">Interaktiv darslar va testlar</p>
+                <button onclick="showPage('topics')" class="bg-white text-amber-800 px-8 py-3 rounded-lg font-semibold text-lg">Boshlash</button>
+            </div>
+        </section>
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="bg-amber-100 rounded-2xl p-6 text-center">
+                    <h2 class="text-xl font-bold mb-2">Kunlik fakt</h2>
+                    <p id="dailyFact" class="text-gray-700">Yuklanmoqda...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-topics" class="hidden">
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6">Mavzular</h2>
+                <div id="topicsList" class="grid sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-topic" class="hidden">
+        <section class="py-10">
+            <div class="max-w-3xl mx-auto px-4">
+                <button onclick="showPage('topics')" class="text-amber-700 mb-4"><i class="fas fa-arrow-left"></i> Orqaga</button>
+                <h2 id="topicTitle" class="text-2xl font-bold mb-4"></h2>
+                <div id="topicContent" class="bg-white p-6 rounded-2xl shadow-sm prose"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-quiz" class="hidden">
+        <section class="py-10">
+            <div class="max-w-xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6 text-center">Bilimingizni sinang</h2>
+                <div id="quizBox" class="bg-white p-6 rounded-2xl shadow-sm">
+                    <p id="quizQuestion" class="font-medium text-lg mb-4"></p>
+                    <div id="quizOptions" class="space-y-2"></div>
+                    <p id="quizResult" class="mt-4 font-semibold hidden"></p>
+                    <button id="nextBtn" onclick="nextQuestion()" class="hidden mt-4 w-full bg-amber-700 text-white py-2 rounded-lg">Keyingi</button>
+                    <button id="restartBtn" onclick="startQuiz()" class="hidden mt-4 w-full bg-amber-700 text-white py-2 rounded-lg">Qayta boshlash</button>
+                </div>
+                <p id="quizScore" class="text-center mt-4 text-gray-600"></p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-10"><p>© 2026 TarixUZ</p></footer>
+
+    <script>
+        const topics = [
+            {id:1, title:"Qadimgi tarix", icon:"scroll", content:"Xorazm, So‘g‘d va Baqtriya qadimgi davlatlari miloddan avvalgi 1-ming yillikda mavjud bo‘lgan. Ular Ipak yo‘li savdosida muhim rol o‘ynagan. Arxeologik topilmalar (Afrosiyob, Tuproqqal’a) bu davr haqida ko‘p ma’lumot beradi."},
+            {id:2, title:"Temuriylar davri", icon:"crown", content:"Amir Temur (1336–1405) Markaziy Osiyoda qudratli davlat yaratdi. Samarqand poytaxt bo‘ldi. Temuriylar davrida fan, san’at va me’morchilik gullab-yashnadi. Ulug‘bek rasadxonasi shu davrning yorqin namunasi."},
+            {id:3, title:"Me’morchilik", icon:"mosque", content:"Registon maydoni, Bibixonim jome masjidi, Shohi-Zinda majmuasi — Temuriylar me’morchiligining durdonalari. Gumbazlar, koshinlar va geometrik naqshlar o‘ziga xos uslub yaratgan."},
+            {id:4, title:"Adabiyot", icon:"book-open", content:"Alisher Navoiy (1441–1501) o‘zbek adabiy tilining asoschisi. «Xamsa» dostonlari jahon adabiyotining durdonasi. Bobur «Boburnoma» asarida o‘z davri tarixini yozib qoldirgan."},
+            {id:5, title:"Musiqa va san’at", icon:"music", content:"Shashmaqom — O‘zbekiston va Tojikistonning umumiy merosi. Milliy raqslar (Lazgi, Andijon polkasi) boy an’analarga ega. Miniatyura san’ati (Kamoliddin Behzod) ham shu yerda rivojlangan."},
+            {id:6, title:"Mustaqillik davri", icon:"flag", content:"1991-yil 31-avgustda O‘zbekiston mustaqillikka erishdi. Yangi Konstitutsiya qabul qilindi. Mamlakat xalqaro tashkilotlarga a’zo bo‘ldi va o‘z taraqqiyot yo‘lini tanladi."}
+        ];
+
+        const facts = [
+            "Amir Temur: «Kuch — adolatdadir».",
+            "Ulug‘bek rasadxonasi 1420-yilda qurilgan.",
+            "Alisher Navoiy 30 dan ortiq asar yozgan.",
+            "Registon maydonidagi 3 madrasa turli asrlarda qurilgan.",
+            "Ipak yo‘li orqali Xitoy, Hindiston va Yevropa bog‘langan."
+        ];
+
+        const quizData = [
+            {q:"Amir Temur qachon tug‘ilgan?", options:["1336","1405","1441","1991"], answer:0},
+            {q:"«Xamsa» asarining muallifi kim?", options:["Bobur","Navoiy","Ulug‘bek","Behzod"], answer:1},
+            {q:"Registon qaysi shaharda?", options:["Buxoro","Toshkent","Samarqand","Xiva"], answer:2},
+            {q:"O‘zbekiston mustaqillikka qachon erishdi?", options:["1990","1991","1992","1989"], answer:1},
+            {q:"Shashmaqom nima?", options:["Raqs","Musiqiy janr","Me’moriy uslub","She’r"], answer:1}
+        ];
+
+        let quizIndex = 0, score = 0;
+
+        function showPage(p) {
+            ['home','topics','topic','quiz'].forEach(x => document.getElementById('page-'+x).classList.add('hidden'));
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p==='topics') renderTopics();
+            if(p==='quiz') startQuiz();
+        }
+
+        function renderTopics() {
+            topicsList.innerHTML = topics.map(t => `
+                <div onclick="openTopic(${t.id})" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                    <i class="fas fa-${t.icon} text-3xl text-amber-700 mb-3"></i>
+                    <h3 class="font-bold text-lg">${t.title}</h3>
+                </div>
+            `).join('');
+        }
+
+        function openTopic(id) {
+            const t = topics.find(x=>x.id===id);
+            topicTitle.textContent = t.title;
+            topicContent.innerHTML = `<p>${t.content}</p>`;
+            showPage('topic');
+        }
+
+        function startQuiz() {
+            quizIndex = 0; score = 0;
+            quizScore.textContent = '';
+            restartBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizData[quizIndex];
+            quizQuestion.textContent = (quizIndex+1) + '. ' + q.q;
+            quizOptions.innerHTML = q.options.map((opt,i) => `
+                <button onclick="checkAnswer(${i})" class="w-full text-left px-4 py-3 border rounded-lg hover:bg-amber-50 transition">
+                    ${opt}
+                </button>
+            `).join('');
+            quizResult.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+        }
+
+        function checkAnswer(i) {
+            const q = quizData[quizIndex];
+            const buttons = quizOptions.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+            if(i === q.answer) {
+                score++;
+                quizResult.textContent = 'To‘g‘ri!';
+                quizResult.className = 'mt-4 font-semibold text-green-600';
+            } else {
+                quizResult.textContent = 'Noto‘g‘ri. To‘g‘ri javob: ' + q.options[q.answer];
+                quizResult.className = 'mt-4 font-semibold text-red-600';
+            }
+            quizResult.classList.remove('hidden');
+            if(quizIndex < quizData.length-1) nextBtn.classList.remove('hidden');
+            else {
+                restartBtn.classList.remove('hidden');
+                quizScore.textContent = `Natija: ${score} / ${quizData.length}`;
+            }
+        }
+
+        function nextQuestion() {
+            quizIndex++;
+            showQuestion();
+        }
+
+        // Daily fact
+        dailyFact.textContent = facts[Math.floor(Math.random()*facts.length)];
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaslahatUZ - Online konsultatsiya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <i class="fas fa-comments text-indigo-600 text-2xl"></i>
+                <span class="text-xl font-bold text-indigo-600">MaslahatUZ</span>
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium">
+                <a href="#" onclick="showPage('home')" class="hover:text-indigo-600">Bosh sahifa</a>
+                <a href="#" onclick="showPage('experts')" class="hover:text-indigo-600">Mutaxassislar</a>
+                <a href="#" onclick="showPage('book')" class="hover:text-indigo-600">Bron qilish</a>
+            </nav>
+            <button onclick="showPage('book')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
+                Konsultatsiya olish
+            </button>
+        </div>
+    </header>
+
+    <div id="page-home">
+        <section class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-16">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Professional maslahat — uyda o‘tirib</h1>
+                <p class="text-xl text-indigo-100 mb-8">Huquqshunos, buxgalter, psixolog va boshqa mutaxassislar</p>
+                <button onclick="showPage('experts')" class="bg-white text-indigo-700 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-indigo-50">
+                    Mutaxassis tanlash
+                </button>
+            </div>
+        </section>
+        <section class="py-12">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-2xl font-bold text-center mb-8">Yo‘nalishlar</h2>
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
+                    <div onclick="filterCat('Huquqshunos')" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                        <i class="fas fa-balance-scale text-2xl text-blue-600 mb-3"></i>
+                        <h3 class="font-bold">Huquqshunos</h3>
+                    </div>
+                    <div onclick="filterCat('Buxgalter')" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                        <i class="fas fa-calculator text-2xl text-green-600 mb-3"></i>
+                        <h3 class="font-bold">Buxgalter</h3>
+                    </div>
+                    <div onclick="filterCat('Psixolog')" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                        <i class="fas fa-brain text-2xl text-purple-600 mb-3"></i>
+                        <h3 class="font-bold">Psixolog</h3>
+                    </div>
+                    <div onclick="filterCat('Shifokor')" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                        <i class="fas fa-heartbeat text-2xl text-orange-600 mb-3"></i>
+                        <h3 class="font-bold">Shifokor</h3>
+                    </div>
+                    <div onclick="filterCat('Karyera')" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                        <i class="fas fa-graduation-cap text-2xl text-pink-600 mb-3"></i>
+                        <h3 class="font-bold">Karyera maslahatchisi</h3>
+                    </div>
+                    <div onclick="filterCat('Ko\'chmas mulk')" class="bg-white p-5 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition">
+                        <i class="fas fa-home text-2xl text-teal-600 mb-3"></i>
+                        <h3 class="font-bold">Ko‘chmas mulk</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-experts" class="hidden">
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Mutaxassislar</h2>
+                    <select id="catFilter" onchange="applyFilter()" class="px-3 py-2 border rounded-lg text-sm">
+                        <option value="">Barchasi</option>
+                        <option>Huquqshunos</option>
+                        <option>Buxgalter</option>
+                        <option>Psixolog</option>
+                        <option>Shifokor</option>
+                        <option>Karyera</option>
+                        <option>Ko'chmas mulk</option>
+                    </select>
+                </div>
+                <div id="expertsList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-book" class="hidden">
+        <section class="py-10">
+            <div class="max-w-xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6 text-center">Konsultatsiya bron qilish</h2>
+                <form id="bookForm" onsubmit="submitBook(event)" class="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Ismingiz</label>
+                        <input type="text" id="bName" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Telefon</label>
+                        <input type="tel" id="bPhone" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Yo‘nalish</label>
+                        <select id="bCat" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Tanlang</option>
+                            <option>Huquqshunos</option>
+                            <option>Buxgalter</option>
+                            <option>Psixolog</option>
+                            <option>Shifokor</option>
+                            <option>Karyera</option>
+                            <option>Ko'chmas mulk</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sana</label>
+                        <input type="date" id="bDate" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Vaqt</label>
+                        <select id="bTime" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Tanlang</option>
+                            <option>09:00</option><option>10:00</option><option>11:00</option>
+                            <option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Muammo (qisqacha)</label>
+                        <textarea id="bDesc" rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700">Bron qilish</button>
+                </form>
+                <div id="bookSuccess" class="hidden mt-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-center">
+                    <i class="fas fa-check-circle text-2xl mb-2"></i>
+                    <p class="font-semibold">Bron muvaffaqiyatli qilindi!</p>
+                    <p class="text-sm mt-1">Mutaxassis siz bilan bog‘lanadi.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times text-xl"></i></button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-10">
+        <p>© 2026 MaslahatUZ</p>
+    </footer>
+
+    <script>
+        const experts = [
+            {id:1, name:"Nilufar Karimova", cat:"Huquqshunos", rating:4.9, price:"150 000 so'm", exp:"12 yil", lang:"O'zbek, Rus"},
+            {id:2, name:"Sardor Aliyev", cat:"Buxgalter", rating:4.8, price:"120 000 so'm", exp:"8 yil", lang:"O'zbek"},
+            {id:3, name:"Madina Toshpulatova", cat:"Psixolog", rating:4.9, price:"180 000 so'm", exp:"10 yil", lang:"O'zbek, Ingliz"},
+            {id:4, name:"Jasur Rahimov", cat:"Shifokor", rating:4.7, price:"200 000 so'm", exp:"15 yil", lang:"O'zbek, Rus"},
+            {id:5, name:"Dilnoza Yusupova", cat:"Karyera", rating:4.6, price:"100 000 so'm", exp:"6 yil", lang:"O'zbek, Ingliz"},
+            {id:6, name:"Bekzod Hasanov", cat:"Ko'chmas mulk", rating:4.8, price:"130 000 so'm", exp:"9 yil", lang:"O'zbek"}
+        ];
+        let filtered = [...experts];
+
+        function showPage(p) {
+            ['home','experts','book'].forEach(x => document.getElementById('page-'+x).classList.add('hidden'));
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p==='experts') renderExperts(filtered);
+            if(p==='book'){ document.getElementById('bookForm').classList.remove('hidden'); document.getElementById('bookSuccess').classList.add('hidden'); }
+        }
+
+        function renderExperts(list) {
+            const c = document.getElementById('expertsList');
+            if(!list.length){ c.innerHTML='<p class="col-span-full text-center text-gray-500 py-10">Topilmadi</p>'; return; }
+            c.innerHTML = list.map(e => `
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <div class="flex justify-between mb-2">
+                        <div>
+                            <h3 class="font-bold text-lg">${e.name}</h3>
+                            <p class="text-indigo-600 text-sm">${e.cat}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-yellow-500"><i class="fas fa-star"></i> ${e.rating}</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-1"><i class="fas fa-tag"></i> ${e.price} / seans</p>
+                    <p class="text-sm text-gray-600 mb-3"><i class="fas fa-briefcase"></i> ${e.exp} • ${e.lang}</p>
+                    <div class="flex gap-2">
+                        <button onclick="showExpert(${e.id})" class="flex-1 bg-indigo-50 text-indigo-700 py-2 rounded-lg text-sm font-medium">Batafsil</button>
+                        <button onclick="bookExpert('${e.cat}')" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium">Bron</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showExpert(id) {
+            const e = experts.find(x=>x.id===id);
+            document.getElementById('modalContent').innerHTML = `
+                <h3 class="text-xl font-bold">${e.name}</h3>
+                <p class="text-indigo-600 mb-4">${e.cat}</p>
+                <p class="text-sm mb-1">Reyting: ${e.rating}</p>
+                <p class="text-sm mb-1">Narx: ${e.price}</p>
+                <p class="text-sm mb-1">Tajriba: ${e.exp}</p>
+                <p class="text-sm mb-4">Tillar: ${e.lang}</p>
+                <button onclick="bookExpert('${e.cat}');closeModal()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold">Bron qilish</button>
+            `;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+        function bookExpert(cat) {
+            showPage('book');
+            document.getElementById('bCat').value = cat;
+        }
+
+        function filterCat(cat) {
+            document.getElementById('catFilter').value = cat;
+            applyFilter();
+            showPage('experts');
+        }
+
+        function applyFilter() {
+            const cat = document.getElementById('catFilter').value;
+            filtered = cat ? experts.filter(e=>e.cat===cat) : [...experts];
+            renderExperts(filtered);
+        }
+
+        function submitBook(e) {
+            e.preventDefault();
+            const data = {
+                name: bName.value, phone: bPhone.value, cat: bCat.value,
+                date: bDate.value, time: bTime.value, desc: bDesc.value,
+                created: new Date().toLocaleString('uz-UZ')
+            };
+            let list = JSON.parse(localStorage.getItem('maslahat_books')||'[]');
+            list.push(data);
+            localStorage.setItem('maslahat_books', JSON.stringify(list));
+            bookForm.classList.add('hidden');
+            bookSuccess.classList.remove('hidden');
+            bookForm.reset();
+        }
+
+        renderExperts(experts);
+    </script>
+</body>
+</html>

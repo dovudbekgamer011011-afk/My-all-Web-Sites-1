@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UyTop - Uy-joy ijarasi va sotuvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-stone-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <i class="fas fa-home text-rose-600 text-2xl"></i>
+                <span class="text-xl font-bold text-rose-600">UyTop</span>
+            </div>
+            <button onclick="showPage('post')" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-700">
+                E’lon joylash
+            </button>
+        </div>
+    </header>
+
+    <div id="page-home">
+        <section class="bg-gradient-to-br from-rose-600 to-pink-700 text-white py-14">
+            <div class="max-w-6xl mx-auto px-4">
+                <h1 class="text-4xl font-bold mb-4 text-center">Orzuingizdagi uyni toping</h1>
+                <div class="bg-white rounded-2xl p-5 max-w-4xl mx-auto shadow-xl">
+                    <div class="flex gap-3 mb-4">
+                        <button id="tabRent" onclick="setType('Ijara')" class="flex-1 bg-rose-600 text-white py-2 rounded-lg font-medium">Ijara</button>
+                        <button id="tabSale" onclick="setType('Sotuv')" class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium">Sotuv</button>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-3">
+                        <select id="fCity" class="px-4 py-3 rounded-lg border text-gray-800">
+                            <option value="">Shahar</option>
+                            <option>Toshkent</option>
+                            <option>Samarqand</option>
+                            <option>Buxoro</option>
+                        </select>
+                        <select id="fRooms" class="px-4 py-3 rounded-lg border text-gray-800">
+                            <option value="">Xona</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4+</option>
+                        </select>
+                        <input id="fPrice" type="number" placeholder="Max narx" class="px-4 py-3 rounded-lg border text-gray-800">
+                        <button onclick="searchListings()" class="bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold">Qidirish</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6">E’lonlar</h2>
+                <div id="listings" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-post" class="hidden">
+        <section class="py-10">
+            <div class="max-w-xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6 text-center">E’lon joylash</h2>
+                <form id="postForm" onsubmit="submitPost(event)" class="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sarlavha</label>
+                        <input type="text" id="pTitle" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tur</label>
+                        <select id="pType" required class="w-full px-4 py-2 border rounded-lg">
+                            <option>Ijara</option>
+                            <option>Sotuv</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Xona</label>
+                            <select id="pRooms" required class="w-full px-4 py-2 border rounded-lg">
+                                <option>1</option><option>2</option><option>3</option><option>4+</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Narx (so‘m)</label>
+                            <input type="number" id="pPrice" required class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Shahar / Tuman</label>
+                        <input type="text" id="pArea" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Telefon</label>
+                        <input type="tel" id="pPhone" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <button type="submit" class="w-full bg-rose-600 text-white py-3 rounded-lg font-semibold">Joylashtirish</button>
+                </form>
+                <div id="postSuccess" class="hidden mt-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-center">
+                    <i class="fas fa-check-circle text-2xl mb-2"></i>
+                    <p class="font-semibold">E’lon joylandi!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-10"><p>© 2026 UyTop</p></footer>
+
+    <script>
+        let currentType = 'Ijara';
+        const listings = [
+            {id:1, title:"2 xonali kvartira", type:"Ijara", rooms:"2", price:4500000, area:"Chilonzor, Toshkent", phone:"+998 90 111 11 11"},
+            {id:2, title:"Hovli uy", type:"Sotuv", rooms:"4+", price:850000000, area:"Yunusobod, Toshkent", phone:"+998 91 222 22 22"},
+            {id:3, title:"3 xonali yangi bino", type:"Ijara", rooms:"3", price:6200000, area:"Mirzo Ulug‘bek", phone:"+998 93 333 33 33"},
+            {id:4, title:"1 xonali studiy", type:"Ijara", rooms:"1", price:2800000, area:"Sergeli", phone:"+998 94 444 44 44"},
+            {id:5, title:"Kvartira yangi uy", type:"Sotuv", rooms:"3", price:620000000, area:"Olmazor", phone:"+998 95 555 55 55"},
+            {id:6, title:"2 xonali", type:"Ijara", rooms:"2", price:3800000, area:"Uchtepa", phone:"+998 97 666 66 66"}
+        ];
+        let filtered = listings.filter(l => l.type === 'Ijara');
+
+        function showPage(p) {
+            document.getElementById('page-home').classList.add('hidden');
+            document.getElementById('page-post').classList.add('hidden');
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p==='post'){ postForm.classList.remove('hidden'); postSuccess.classList.add('hidden'); }
+        }
+
+        function setType(type) {
+            currentType = type;
+            if(type==='Ijara'){
+                tabRent.className = 'flex-1 bg-rose-600 text-white py-2 rounded-lg font-medium';
+                tabSale.className = 'flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium';
+            } else {
+                tabSale.className = 'flex-1 bg-rose-600 text-white py-2 rounded-lg font-medium';
+                tabRent.className = 'flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium';
+            }
+            searchListings();
+        }
+
+        function searchListings() {
+            const city = fCity.value.toLowerCase();
+            const rooms = fRooms.value;
+            const maxPrice = parseInt(fPrice.value) || Infinity;
+            filtered = listings.filter(l => {
+                return l.type === currentType &&
+                    (!city || l.area.toLowerCase().includes(city)) &&
+                    (!rooms || l.rooms === rooms) &&
+                    l.price <= maxPrice;
+            });
+            renderListings();
+        }
+
+        function renderListings() {
+            const c = document.getElementById('listings');
+            if(!filtered.length){ c.innerHTML='<p class="col-span-full text-center text-gray-500 py-10">Topilmadi</p>'; return; }
+            c.innerHTML = filtered.map(l => `
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition cursor-pointer" onclick="showListing(${l.id})">
+                    <div class="h-40 bg-gradient-to-br from-stone-200 to-stone-300 flex items-center justify-center">
+                        <i class="fas fa-building text-5xl text-stone-400"></i>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold">${l.title}</h3>
+                            <span class="text-xs px-2 py-1 rounded ${l.type==='Ijara'?'bg-rose-100 text-rose-700':'bg-green-100 text-green-700'}">${l.type}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mb-2"><i class="fas fa-map-marker-alt"></i> ${l.area}</p>
+                        <p class="text-rose-600 font-bold text-xl">${l.price.toLocaleString()} so‘m${l.type==='Ijara'?'/oy':''}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showListing(id) {
+            const l = listings.find(x=>x.id===id);
+            modalContent.innerHTML = `
+                <h3 class="text-xl font-bold mb-1">${l.title}</h3>
+                <span class="text-xs px-2 py-1 rounded ${l.type==='Ijara'?'bg-rose-100 text-rose-700':'bg-green-100 text-green-700'}">${l.type}</span>
+                <p class="mt-3 text-sm"><i class="fas fa-door-open"></i> ${l.rooms} xona</p>
+                <p class="text-sm"><i class="fas fa-map-marker-alt"></i> ${l.area}</p>
+                <p class="text-rose-600 font-bold text-xl my-3">${l.price.toLocaleString()} so‘m${l.type==='Ijara'?'/oy':''}</p>
+                <p class="text-sm mb-4">Telefon: <b>${l.phone}</b></p>
+                <a href="tel:${l.phone}" class="block w-full bg-rose-600 text-white py-3 rounded-lg font-semibold text-center">Qo‘ng‘iroq qilish</a>
+            `;
+            modal.classList.remove('hidden');
+        }
+        function closeModal(){ modal.classList.add('hidden'); }
+
+        function submitPost(e) {
+            e.preventDefault();
+            const data = {
+                id: Date.now(),
+                title: pTitle.value, type: pType.value, rooms: pRooms.value,
+                price: parseInt(pPrice.value), area: pArea.value, phone: pPhone.value
+            };
+            listings.unshift(data);
+            let saved = JSON.parse(localStorage.getItem('uytop_listings')||'[]');
+            saved.unshift(data);
+            localStorage.setItem('uytop_listings', JSON.stringify(saved));
+            postForm.classList.add('hidden');
+            postSuccess.classList.remove('hidden');
+            postForm.reset();
+            searchListings();
+        }
+
+        renderListings();
+    </script>
+</body>
+</html>

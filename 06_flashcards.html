@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;background:#0f0f13;color:#e8e8ed;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:1.85rem;font-weight:700;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:#94a3b8;font-size:.95rem}
+.card{background:rgba(30,30,40,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card h2{font-size:1.1rem;font-weight:600;margin-bottom:16px;color:#f1f5f9}
+label{display:block;font-size:.85rem;color:#94a3b8;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(15,15,20,.6);color:#f1f5f9;font-size:1rem;margin-bottom:14px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#a78bfa}
+button{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,.4)}
+button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+button.danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.8rem;background:rgba(167,139,250,.15);color:#c4b5fd}
+.muted{color:#94a3b8;font-size:.9rem}
+.success{color:#4ade80}
+.result{font-size:2rem;font-weight:700;text-align:center;padding:16px;word-break:break-all}
+footer{text-align:center;color:#64748b;font-size:.8rem;margin-top:40px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero"><h1>🃏 Flashcard</h1><p>Yodlash kartochkalari</p></div>
+<div class="card">
+  <div class="row">
+    <input id="front" placeholder="Old tomon (savol)" style="margin:0">
+    <input id="back" placeholder="Orqa tomon (javob)" style="margin:0">
+    <button onclick="addCard()" style="flex:0 0 auto">Qo'shish</button>
+  </div>
+</div>
+<div class="card" id="cardArea" style="min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer" onclick="flip()">
+  <p class="muted" id="hint">Kartochka qo'shing</p>
+  <div id="cardText" style="font-size:1.5rem;font-weight:600;text-align:center"></div>
+  <p class="muted" id="side" style="margin-top:12px"></p>
+</div>
+<div class="row" style="margin-bottom:20px">
+  <button class="secondary" onclick="prev()" style="flex:1">← Oldingi</button>
+  <button class="secondary" onclick="next()" style="flex:1">Keyingi →</button>
+  <button class="danger" onclick="delCard()" style="flex:0 0 auto">O'chirish</button>
+</div>
+<p class="muted" style="text-align:center" id="counter"></p>
+
+<footer>Ishlaydigan web-sayt · HTML + CSS + JS</footer>
+</div>
+<script>
+let cards=JSON.parse(localStorage.getItem('flash')||'[]');
+let idx=0, showBack=false;
+function save(){localStorage.setItem('flash',JSON.stringify(cards));render()}
+function addCard(){
+  const f=document.getElementById('front').value.trim();
+  const b=document.getElementById('back').value.trim();
+  if(!f||!b)return;
+  cards.push({front:f,back:b});
+  document.getElementById('front').value='';
+  document.getElementById('back').value='';
+  idx=cards.length-1;showBack=false;save();
+}
+function delCard(){if(!cards.length)return;cards.splice(idx,1);if(idx>=cards.length)idx=Math.max(0,cards.length-1);showBack=false;save()}
+function flip(){if(!cards.length)return;showBack=!showBack;render()}
+function next(){if(!cards.length)return;idx=(idx+1)%cards.length;showBack=false;render()}
+function prev(){if(!cards.length)return;idx=(idx-1+cards.length)%cards.length;showBack=false;render()}
+function render(){
+  if(!cards.length){
+    document.getElementById('hint').style.display='block';
+    document.getElementById('cardText').textContent='';
+    document.getElementById('side').textContent='';
+    document.getElementById('counter').textContent='';
+    return;
+  }
+  document.getElementById('hint').style.display='none';
+  const c=cards[idx];
+  document.getElementById('cardText').textContent=showBack?c.back:c.front;
+  document.getElementById('side').textContent=showBack?'Javob (bosib aylantiring)':'Savol (bosib aylantiring)';
+  document.getElementById('counter').textContent=(idx+1)+' / '+cards.length;
+}
+render();
+</script>
+</body>
+</html>

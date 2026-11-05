@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vazifalar</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>✓ Vazifalar</h1><p>Prioritet, muddat, filtrlash</p></div>
+<div class="card">
+<input id="title" placeholder="Vazifa...">
+<div class="row">
+<select id="pri"><option value="low">Past</option><option value="med" selected>O'rta</option><option value="high">Yuqori</option></select>
+<input type="date" id="due">
+<button onclick="add()">Qo'shish</button>
+</div></div>
+<div class="card">
+<div class="row" style="margin-bottom:14px">
+<button class="sec" id="f-all" onclick="setF('all')">Hammasi</button>
+<button class="sec" id="f-active" onclick="setF('active')">Faol</button>
+<button class="sec" id="f-done" onclick="setF('done')">Bajarilgan</button>
+<button class="danger" onclick="clearDone()" style="flex:0 0 auto">Tozalash</button>
+</div><div id="list"></div><p class="muted" id="cnt" style="margin-top:12px"></p></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let tasks=JSON.parse(localStorage.getItem("tasks2")||"[]"),mode="all";
+const pc={low:"#94a3b8",med:"#f59e0b",high:"#ef4444"};
+function save(){localStorage.setItem("tasks2",JSON.stringify(tasks));render()}
+function add(){const t=document.getElementById("title").value.trim();if(!t)return;tasks.unshift({id:Date.now(),title:t,pri:document.getElementById("pri").value,due:document.getElementById("due").value,done:false});document.getElementById("title").value="";document.getElementById("due").value="";save()}
+function tog(id){tasks=tasks.map(t=>t.id===id?{...t,done:!t.done}:t);save()}
+function del(id){tasks=tasks.filter(t=>t.id!==id);save()}
+function clearDone(){tasks=tasks.filter(t=>!t.done);save()}
+function setF(m){mode=m;["all","active","done"].forEach(x=>{const b=document.getElementById("f-"+x);b.style.background=x===m?"linear-gradient(135deg,#8b5cf6,#3b82f6)":"";b.style.border=x===m?"none":""});render()}
+function render(){let list=tasks;if(mode==="active")list=tasks.filter(t=>!t.done);if(mode==="done")list=tasks.filter(t=>t.done);
+document.getElementById("list").innerHTML=list.length?list.map(t=>`<div class="list-item"><input type="checkbox" ${t.done?"checked":""} onchange="tog(${t.id})" style="width:18px;height:18px;accent-color:#8b5cf6"><div style="flex:1"><div style="${t.done?"text-decoration:line-through;color:#64748b":""}">${t.title}</div><div class="muted"><span style="color:${pc[t.pri]}">${t.pri}</span>${t.due?" · "+t.due:""}</div></div><button class="danger" style="padding:6px 10px" onclick="del(${t.id})">×</button></div>`).join(""):'<div class="empty">Vazifa yo\'q</div>';
+document.getElementById("cnt").textContent=tasks.filter(t=>!t.done).length+" ta faol"}
+setF("all");document.getElementById("title").onkeypress=e=>{if(e.key==="Enter")add()};
+</script></body></html>

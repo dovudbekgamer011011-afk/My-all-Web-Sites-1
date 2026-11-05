@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ta’mirUZ - Online ta’mirlash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-cyan-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <i class="fas fa-tools text-cyan-600 text-2xl"></i>
+                <span class="text-xl font-bold text-cyan-600">Ta’mirUZ</span>
+            </div>
+            <button onclick="showPage('order')" class="bg-cyan-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-cyan-700">
+                Buyurtma berish
+            </button>
+        </div>
+    </header>
+
+    <div id="page-home">
+        <section class="bg-gradient-to-r from-cyan-600 to-teal-700 text-white py-16">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Telefon, noutbuk va texnika ta’miri</h1>
+                <p class="text-xl text-cyan-100 mb-8">Uyga kelib tuzatamiz yoki olib ketamiz</p>
+                <button onclick="showPage('order')" class="bg-white text-cyan-700 px-8 py-3 rounded-lg font-semibold text-lg">Buyurtma qilish</button>
+            </div>
+        </section>
+        <section class="py-12">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-2xl font-bold text-center mb-8">Nimalarni ta’mirlaymiz?</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                    <div onclick="selectDevice('Telefon')" class="bg-white p-6 rounded-2xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-mobile-alt text-4xl text-cyan-600 mb-3"></i>
+                        <h3 class="font-semibold">Telefonlar</h3>
+                    </div>
+                    <div onclick="selectDevice('Noutbuk')" class="bg-white p-6 rounded-2xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-laptop text-4xl text-cyan-600 mb-3"></i>
+                        <h3 class="font-semibold">Noutbuklar</h3>
+                    </div>
+                    <div onclick="selectDevice('Televizor')" class="bg-white p-6 rounded-2xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-tv text-4xl text-cyan-600 mb-3"></i>
+                        <h3 class="font-semibold">Televizorlar</h3>
+                    </div>
+                    <div onclick="selectDevice('Maishiy texnika')" class="bg-white p-6 rounded-2xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-blender text-4xl text-cyan-600 mb-3"></i>
+                        <h3 class="font-semibold">Maishiy texnika</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-order" class="hidden">
+        <section class="py-10">
+            <div class="max-w-xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6 text-center">Buyurtma berish</h2>
+                <form id="orderForm" onsubmit="submitOrder(event)" class="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Ismingiz</label>
+                        <input type="text" id="oName" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Telefon</label>
+                        <input type="tel" id="oPhone" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Qurilma turi</label>
+                        <select id="oDevice" required class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">Tanlang</option>
+                            <option>Telefon</option>
+                            <option>Noutbuk</option>
+                            <option>Televizor</option>
+                            <option>Maishiy texnika</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Muammo</label>
+                        <textarea id="oProblem" rows="3" required class="w-full px-4 py-2 border rounded-lg" placeholder="Masalan: ekran sindi, yoqilmaydi..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Xizmat turi</label>
+                        <select id="oService" required class="w-full px-4 py-2 border rounded-lg">
+                            <option>Uyga chaqirish</option>
+                            <option>Olib ketish</option>
+                            <option>Servisga olib borish</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Manzil</label>
+                        <input type="text" id="oAddress" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-600 text-white py-3 rounded-lg font-semibold hover:bg-cyan-700">Yuborish</button>
+                </form>
+                <div id="orderSuccess" class="hidden mt-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-center">
+                    <i class="fas fa-check-circle text-2xl mb-2"></i>
+                    <p class="font-semibold">Buyurtma qabul qilindi!</p>
+                    <p class="text-sm mt-1">Tez orada siz bilan bog‘lanamiz.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-10"><p>© 2026 Ta’mirUZ</p></footer>
+
+    <script>
+        function showPage(p) {
+            document.getElementById('page-home').classList.add('hidden');
+            document.getElementById('page-order').classList.add('hidden');
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p==='order'){ orderForm.classList.remove('hidden'); orderSuccess.classList.add('hidden'); }
+        }
+
+        function selectDevice(device) {
+            showPage('order');
+            oDevice.value = device;
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const data = {
+                name: oName.value, phone: oPhone.value, device: oDevice.value,
+                problem: oProblem.value, service: oService.value, address: oAddress.value,
+                created: new Date().toLocaleString('uz-UZ')
+            };
+            let list = JSON.parse(localStorage.getItem('tamir_orders')||'[]');
+            list.push(data);
+            localStorage.setItem('tamir_orders', JSON.stringify(list));
+            orderForm.classList.add('hidden');
+            orderSuccess.classList.remove('hidden');
+            orderForm.reset();
+        }
+    </script>
+</body>
+</html>

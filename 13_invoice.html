@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hisob-faktura</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>📄 Hisob-faktura</h1><p>Yaratish va chop etish</p></div>
+<div class="card">
+<div class="row"><div><label>Mijoz</label><input id="client" placeholder="Ism"></div><div><label>Sana</label><input type="date" id="date"></div></div>
+<label>Xizmat</label><input id="item" placeholder="Nomi">
+<div class="row"><div><label>Narx</label><input type="number" id="price" step="0.01"></div><div><label>Miqdor</label><input type="number" id="qty" value="1" min="1"></div></div>
+<button onclick="addItem()" style="width:100%">Qo'shish</button>
+</div>
+<div class="card"><h2>Pozitsiyalar</h2><div id="items"></div>
+<div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)"><strong>Jami</strong><strong id="total" style="color:#a78bfa;font-size:1.3rem">$0.00</strong></div>
+<button onclick="printInv()" style="width:100%;margin-top:16px">Chop etish / PDF</button></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let items=[];document.getElementById("date").value=new Date().toISOString().slice(0,10);
+function addItem(){const name=document.getElementById("item").value.trim(),price=+document.getElementById("price").value||0,qty=+document.getElementById("qty").value||1;if(!name||!price)return;items.push({name,price,qty});document.getElementById("item").value="";document.getElementById("price").value="";document.getElementById("qty").value="1";render()}
+function del(i){items.splice(i,1);render()}
+function render(){document.getElementById("items").innerHTML=items.map((x,i)=>`<div class="list-item"><span style="flex:1">${x.name} ×${x.qty}</span><span>$${(x.price*x.qty).toFixed(2)} <button class="danger" style="padding:2px 8px;margin-left:8px" onclick="del(${i})">×</button></span></div>`).join("")||'<p class="muted">Yo\'q</p>';
+document.getElementById("total").textContent="$"+items.reduce((s,x)=>s+x.price*x.qty,0).toFixed(2)}
+function printInv(){const client=document.getElementById("client").value||"Mijoz",date=document.getElementById("date").value;
+const rows=items.map(x=>`<tr><td>${x.name}</td><td>${x.qty}</td><td>$${x.price.toFixed(2)}</td><td>$${(x.price*x.qty).toFixed(2)}</td></tr>`).join("");
+const t=items.reduce((s,x)=>s+x.price*x.qty,0);const w=window.open("","","width=700,height=600");
+w.document.write(`<html><head><title>Faktura</title><style>body{font-family:system-ui;padding:40px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:10px;text-align:left}th{background:#f1f5f9}.total{font-size:1.3rem;margin-top:20px;text-align:right}</style></head><body><h1>Hisob-faktura</h1><p><strong>Mijoz:</strong> ${client}<br><strong>Sana:</strong> ${date}</p><table><tr><th>Nomi</th><th>Miqdor</th><th>Narx</th><th>Summa</th></tr>${rows}</table><p class="total"><strong>Jami: $${t.toFixed(2)}</strong></p><script>window.print()<\/script></body></html>`);w.document.close()}
+render();
+</script></body></html>

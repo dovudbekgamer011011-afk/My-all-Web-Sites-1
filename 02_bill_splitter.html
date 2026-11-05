@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hisob Bo'lish</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;background:#0f0f13;color:#e8e8ed;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:1.85rem;font-weight:700;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:#94a3b8;font-size:.95rem}
+.card{background:rgba(30,30,40,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card h2{font-size:1.1rem;font-weight:600;margin-bottom:16px;color:#f1f5f9}
+label{display:block;font-size:.85rem;color:#94a3b8;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(15,15,20,.6);color:#f1f5f9;font-size:1rem;margin-bottom:14px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#a78bfa}
+button{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,.4)}
+button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+button.danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.8rem;background:rgba(167,139,250,.15);color:#c4b5fd}
+.muted{color:#94a3b8;font-size:.9rem}
+.success{color:#4ade80}
+.result{font-size:2rem;font-weight:700;text-align:center;padding:16px;word-break:break-all}
+footer{text-align:center;color:#64748b;font-size:.8rem;margin-top:40px}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero"><h1>🧾 Hisob Bo'lish</h1><p>Restoran hisobini adolatli bo'ling</p></div>
+<div class="card">
+  <label>Jami summa</label>
+  <input type="number" id="total" placeholder="0" step="0.01" oninput="calc()">
+  <label>Odamlar soni</label>
+  <input type="number" id="people" value="2" min="1" oninput="calc()">
+  <label>Choychaqa (%)</label>
+  <input type="range" id="tip" min="0" max="30" value="10" oninput="document.getElementById('tipVal').textContent=this.value+'%';calc()">
+  <p class="muted">Choychaqa: <span id="tipVal">10%</span></p>
+</div>
+<div class="card">
+  <div class="grid">
+    <div style="text-align:center"><div class="muted">Choychaqa</div><div style="font-size:1.4rem;font-weight:600" id="tipAmt">$0</div></div>
+    <div style="text-align:center"><div class="muted">Jami</div><div style="font-size:1.4rem;font-weight:600" id="grand">$0</div></div>
+    <div style="text-align:center"><div class="muted">Har bir kishi</div><div style="font-size:1.6rem;font-weight:700;color:#a78bfa" id="each">$0</div></div>
+  </div>
+</div>
+
+<footer>Ishlaydigan web-sayt · HTML + CSS + JS</footer>
+</div>
+<script>
+function calc(){
+  const total=+document.getElementById('total').value||0;
+  const people=Math.max(1,+document.getElementById('people').value||1);
+  const tipPct=+document.getElementById('tip').value;
+  const tipAmt=total*tipPct/100;
+  const grand=total+tipAmt;
+  document.getElementById('tipAmt').textContent='$'+tipAmt.toFixed(2);
+  document.getElementById('grand').textContent='$'+grand.toFixed(2);
+  document.getElementById('each').textContent='$'+(grand/people).toFixed(2);
+}
+calc();
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;background:#0f0f13;color:#e8e8ed;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:1.85rem;font-weight:700;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:#94a3b8;font-size:.95rem}
+.card{background:rgba(30,30,40,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;margin-bottom:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card h2{font-size:1.1rem;font-weight:600;margin-bottom:16px;color:#f1f5f9}
+label{display:block;font-size:.85rem;color:#94a3b8;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(15,15,20,.6);color:#f1f5f9;font-size:1rem;margin-bottom:14px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#a78bfa}
+button{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,.4)}
+button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+button.danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.8rem;background:rgba(167,139,250,.15);color:#c4b5fd}
+.muted{color:#94a3b8;font-size:.9rem}
+.success{color:#4ade80}
+.result{font-size:2rem;font-weight:700;text-align:center;padding:16px;word-break:break-all}
+footer{text-align:center;color:#64748b;font-size:.8rem;margin-top:40px}
+
+@media(max-width:600px){.grid{grid-template-columns:1fr!important}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero"><h1>📋 Kanban Doska</h1><p>Vazifalarni boshqaring</p></div>
+<div class="card">
+  <div class="row">
+    <input id="task" placeholder="Yangi vazifa..." style="margin:0;flex:2">
+    <select id="col" style="margin:0;flex:1"><option value="todo">Qilish</option><option value="doing">Jarayonda</option><option value="done">Tugadi</option></select>
+    <button onclick="add()" style="flex:0 0 auto">Qo'shish</button>
+  </div>
+</div>
+<div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px" id="board"></div>
+
+<footer>Ishlaydigan web-sayt · HTML + CSS + JS</footer>
+</div>
+<script>
+let tasks=JSON.parse(localStorage.getItem('kanban')||'[]');
+const cols={todo:'Qilish',doing:'Jarayonda',done:'Tugadi'};
+const colors={todo:'#f59e0b',doing:'#3b82f6',done:'#22c55e'};
+function save(){localStorage.setItem('kanban',JSON.stringify(tasks));render()}
+function add(){
+  const t=document.getElementById('task').value.trim();
+  if(!t)return;
+  tasks.push({id:Date.now(),text:t,col:document.getElementById('col').value});
+  document.getElementById('task').value='';save();
+}
+function move(id,col){tasks=tasks.map(t=>t.id===id?{...t,col}:t);save()}
+function del(id){tasks=tasks.filter(t=>t.id!==id);save()}
+function render(){
+  document.getElementById('board').innerHTML=Object.keys(cols).map(col=>{
+    const items=tasks.filter(t=>t.col===col);
+    return `<div class="card" style="padding:16px;border-top:3px solid ${colors[col]}">
+      <h2 style="font-size:1rem;margin-bottom:12px">${cols[col]} <span class="pill">${items.length}</span></h2>
+      ${items.map(t=>`<div style="background:rgba(0,0,0,.25);border-radius:10px;padding:12px;margin-bottom:8px">
+        <div style="margin-bottom:8px">${t.text}</div>
+        <div class="row" style="gap:6px">
+          ${col!=='todo'?`<button class="secondary" style="padding:4px 8px;font-size:.75rem" onclick="move(${t.id},'todo')">←</button>`:''}
+          ${col!=='doing'?`<button class="secondary" style="padding:4px 8px;font-size:.75rem" onclick="move(${t.id},'doing')">→</button>`:''}
+          ${col!=='done'?`<button class="secondary" style="padding:4px 8px;font-size:.75rem" onclick="move(${t.id},'done')">✓</button>`:''}
+          <button class="danger" style="padding:4px 8px;font-size:.75rem" onclick="del(${t.id})">×</button>
+        </div>
+      </div>`).join('')||'<p class="muted" style="font-size:.85rem">Bo\'sh</p>'}
+    </div>`;
+  }).join('');
+}
+render();
+document.getElementById('task').onkeypress=e=>{if(e.key==='Enter')add()};
+</script>
+</body>
+</html>

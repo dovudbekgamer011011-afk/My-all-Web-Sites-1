@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meditatsiya</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>🧘 Meditatsiya</h1><p>Nafas va taymer</p></div>
+<div class="card"><h2>Seanslar</h2>
+<button onclick="start(5)" style="width:100%;margin-bottom:8px">5 daqiqa</button>
+<button onclick="start(10)" style="width:100%;margin-bottom:8px">10 daqiqa</button>
+<button onclick="start(15)" style="width:100%;margin-bottom:8px">15 daqiqa</button>
+<button onclick="start(20)" style="width:100%">20 daqiqa</button>
+</div>
+<div class="card" style="text-align:center">
+<div id="tm" style="font-size:3rem;font-weight:700">00:00</div>
+<p id="st" class="muted">Seans tanlang</p>
+<button class="danger" id="stop" style="display:none;margin-top:12px" onclick="stop()">To'xtatish</button>
+</div>
+<div class="card"><h2>Nafas 4-7-8</h2>
+<p id="breath" style="font-size:1.5rem;text-align:center;padding:16px">Boshlash uchun bosing</p>
+<button onclick="breathStart()" style="width:100%">Nafas mashqi</button>
+</div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+let timer,left=0,breathT;
+function start(min){clearInterval(timer);left=min*60;document.getElementById("stop").style.display="inline-block";document.getElementById("st").textContent="Meditatsiya...";tick();timer=setInterval(tick,1000)}
+function tick(){if(left<=0){clearInterval(timer);document.getElementById("st").textContent="Tugadi!";document.getElementById("stop").style.display="none";return}
+document.getElementById("tm").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");left--}
+function stop(){clearInterval(timer);document.getElementById("tm").textContent="00:00";document.getElementById("st").textContent="To'xtatildi";document.getElementById("stop").style.display="none"}
+function breathStart(){clearInterval(breathT);const ph=[{t:4,x:"Nafas oling"},{t:7,x:"Ushlang"},{t:8,x:"Chiqaring"}];let i=0,c=4;
+document.getElementById("breath").textContent=ph[0].x+" "+c;breathT=setInterval(()=>{c--;if(c<=0){i=(i+1)%3;c=ph[i].t}document.getElementById("breath").textContent=ph[i].x+" "+c},1000)}
+</script></body></html>

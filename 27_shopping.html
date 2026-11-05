@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Do'kon</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>🛒 Mini Do'kon</h1><p>Savat va buyurtma</p></div>
+<div class="card" style="text-align:center"><span class="pill">Savat: <span id="cnt">0</span> · $<span id="tot">0</span></span></div>
+<div class="grid" id="products"></div>
+<div class="card"><h2>Savat</h2><div id="cart"></div><button onclick="checkout()" style="width:100%;margin-top:12px">Buyurtma berish</button><p id="msg" class="ok" style="margin-top:8px"></p></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+const P=[{id:1,n:"Naushnik",p:49.99},{id:2,n:"Klaviatura",p:79.99},{id:3,n:"Sichqoncha",p:29.99},{id:4,n:"USB hub",p:19.99},{id:5,n:"Monitor stand",p:39.99},{id:6,n:"Webcam",p:59.99}];
+let cart=JSON.parse(localStorage.getItem("shop2")||"{}");
+function render(){document.getElementById("products").innerHTML=P.map(x=>`<div class="card"><h3>${x.n}</h3><p style="color:#a78bfa;font-size:1.2rem">$${x.p}</p><button onclick="add(${x.id})" style="width:100%;margin-top:8px">Savatga</button></div>`).join("");
+let c=0,t=0,h="";Object.keys(cart).forEach(id=>{const x=P.find(z=>z.id==id);c+=cart[id];t+=x.p*cart[id];h+=`<div class="list-item"><span style="flex:1">${x.n} ×${cart[id]}</span><span>$${(x.p*cart[id]).toFixed(2)} <button class="danger" style="padding:2px 8px;margin-left:6px" onclick="rm(${id})">×</button></span></div>`});
+document.getElementById("cart").innerHTML=h||'<p class="muted">Bo\'sh</p>';document.getElementById("cnt").textContent=c;document.getElementById("tot").textContent=t.toFixed(2);localStorage.setItem("shop2",JSON.stringify(cart))}
+function add(id){cart[id]=(cart[id]||0)+1;render()}function rm(id){delete cart[id];render()}
+function checkout(){if(!Object.keys(cart).length){alert("Savat bo'sh");return}document.getElementById("msg").textContent="Buyurtma qabul qilindi! $"+document.getElementById("tot").textContent;cart={};render()}
+render();
+</script></body></html>

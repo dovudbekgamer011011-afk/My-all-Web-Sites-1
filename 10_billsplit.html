@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hisob Bo'lish</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b10;--card:#16161d;--border:rgba(255,255,255,.08);--text:#e8e8ed;--muted:#94a3b8;--accent:#8b5cf6;--accent2:#3b82f6;--ok:#22c55e;--danger:#ef4444}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto;padding:28px 18px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:1.7rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--muted);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:14px}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;margin-bottom:12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:11px 18px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.sec{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:100px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;background:rgba(139,92,246,.15);color:#c4b5fd}
+.muted{color:var(--muted);font-size:.88rem}
+.ok{color:var(--ok)}.danger-t{color:var(--danger)}
+.stat{text-align:center;padding:14px;background:rgba(0,0,0,.25);border-radius:12px}
+.stat .n{font-size:1.45rem;font-weight:700}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.empty{text-align:center;color:var(--muted);padding:24px}
+footer{text-align:center;color:#64748b;font-size:.78rem;margin-top:36px;padding-bottom:20px}
+</style></head><body><div class="wrap">
+<div class="hero"><h1>🧾 Hisob Bo'lish</h1><p>Choychaqa va soliq bilan</p></div>
+<div class="card">
+<label>Jami</label><input type="number" id="total" step="0.01" oninput="calc()">
+<label>Odamlar</label><input type="number" id="people" value="2" min="1" oninput="calc()">
+<label>Choychaqa: <span id="tv">10%</span></label><input type="range" id="tip" min="0" max="30" value="10" oninput="document.getElementById('tv').textContent=this.value+'%';calc()">
+<label>Soliq %</label><input type="number" id="tax" value="0" oninput="calc()">
+</div>
+<div class="card"><div class="grid">
+<div class="stat"><div class="muted">Choychaqa</div><div class="n" id="tipA">$0</div></div>
+<div class="stat"><div class="muted">Soliq</div><div class="n" id="taxA">$0</div></div>
+<div class="stat"><div class="muted">Jami</div><div class="n" id="grand">$0</div></div>
+<div class="stat"><div class="muted">Har bir</div><div class="n" style="color:#a78bfa" id="each">$0</div></div>
+</div></div>
+<footer>Ishlaydigan web-sayt</footer></div>
+<script>
+function calc(){const total=+document.getElementById("total").value||0,people=Math.max(1,+document.getElementById("people").value||1),tipPct=+document.getElementById("tip").value,taxPct=+document.getElementById("tax").value||0;
+const tipA=total*tipPct/100,taxA=total*taxPct/100,grand=total+tipA+taxA;
+document.getElementById("tipA").textContent="$"+tipA.toFixed(2);document.getElementById("taxA").textContent="$"+taxA.toFixed(2);
+document.getElementById("grand").textContent="$"+grand.toFixed(2);document.getElementById("each").textContent="$"+(grand/people).toFixed(2)}
+calc();
+</script></body></html>

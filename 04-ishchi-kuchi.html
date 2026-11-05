@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IshTop - Tezkor ishchi kuchi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-orange-50 text-gray-800">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                <i class="fas fa-hard-hat text-orange-600 text-2xl"></i>
+                <span class="text-xl font-bold text-orange-600">IshTop</span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="showPage('workers')" class="text-orange-600 font-medium text-sm">Ishchilar</button>
+                <button onclick="showPage('post')" class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700">
+                    Ishchi kerak
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="page-home">
+        <section class="bg-gradient-to-r from-orange-500 to-red-600 text-white py-16">
+            <div class="max-w-6xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Bugun ishchi toping</h1>
+                <p class="text-xl text-orange-100 mb-8">Kunlik ishlar, qurilish, tozalash, yuk tashish</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
+                    <button onclick="showPage('workers')" class="bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold">Ishchi topish</button>
+                    <button onclick="showPage('post')" class="bg-orange-800 text-white px-6 py-3 rounded-lg font-semibold">Ish e’lon qilish</button>
+                </div>
+            </div>
+        </section>
+        <section class="py-12">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6 text-center">Ish turlari</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div onclick="filterJob('Qurilish')" class="bg-white p-5 rounded-xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-building text-3xl text-orange-500 mb-2"></i>
+                        <h3 class="font-semibold">Qurilish</h3>
+                    </div>
+                    <div onclick="filterJob('Tozalash')" class="bg-white p-5 rounded-xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-broom text-3xl text-orange-500 mb-2"></i>
+                        <h3 class="font-semibold">Tozalash</h3>
+                    </div>
+                    <div onclick="filterJob('Yuk tashish')" class="bg-white p-5 rounded-xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-truck text-3xl text-orange-500 mb-2"></i>
+                        <h3 class="font-semibold">Yuk tashish</h3>
+                    </div>
+                    <div onclick="filterJob('Bog‘dorchilik')" class="bg-white p-5 rounded-xl shadow-sm text-center cursor-pointer hover:shadow-md">
+                        <i class="fas fa-seedling text-3xl text-orange-500 mb-2"></i>
+                        <h3 class="font-semibold">Bog‘dorchilik</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-workers" class="hidden">
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Ishchilar</h2>
+                    <select id="jobFilter" onchange="applyFilter()" class="px-3 py-2 border rounded-lg text-sm">
+                        <option value="">Barcha ishlar</option>
+                        <option>Qurilish</option>
+                        <option>Tozalash</option>
+                        <option>Yuk tashish</option>
+                        <option>Bog‘dorchilik</option>
+                        <option>Mebel</option>
+                    </select>
+                </div>
+                <div id="workersList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="page-post" class="hidden">
+        <section class="py-10">
+            <div class="max-w-xl mx-auto px-4">
+                <h2 class="text-2xl font-bold mb-6 text-center">Ish e’lon qilish</h2>
+                <form id="postForm" onsubmit="submitPost(event)" class="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Ismingiz / Kompaniya</label>
+                        <input type="text" id="pName" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Telefon</label>
+                        <input type="tel" id="pPhone" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Ish turi</label>
+                        <select id="pJob" required class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">Tanlang</option>
+                            <option>Qurilish</option>
+                            <option>Tozalash</option>
+                            <option>Yuk tashish</option>
+                            <option>Bog‘dorchilik</option>
+                            <option>Mebel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Manzil</label>
+                        <input type="text" id="pAddress" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Kunlik haq (so‘m)</label>
+                        <input type="number" id="pPrice" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tavsif</label>
+                        <textarea id="pDesc" rows="3" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700">E’lon qilish</button>
+                </form>
+                <div id="postSuccess" class="hidden mt-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-center">
+                    <i class="fas fa-check-circle text-2xl mb-2"></i>
+                    <p class="font-semibold">E’lon joylandi!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-10"><p>© 2026 IshTop</p></footer>
+
+    <script>
+        const workers = [
+            {id:1, name:"Aziz", job:"Qurilish", rating:4.8, price:"250 000", area:"Chilonzor", exp:"5 yil", phone:"+998 90 111 11 11"},
+            {id:2, name:"Bobur", job:"Tozalash", rating:4.6, price:"180 000", area:"Yunusobod", exp:"3 yil", phone:"+998 91 222 22 22"},
+            {id:3, name:"Dilshod", job:"Yuk tashish", rating:4.9, price:"200 000", area:"Sergeli", exp:"7 yil", phone:"+998 93 333 33 33"},
+            {id:4, name:"Eldor", job:"Bog‘dorchilik", rating:4.5, price:"160 000", area:"Olmazor", exp:"4 yil", phone:"+998 94 444 44 44"},
+            {id:5, name:"Farrux", job:"Qurilish", rating:4.7, price:"280 000", area:"Mirzo Ulug‘bek", exp:"8 yil", phone:"+998 95 555 55 55"},
+            {id:6, name:"G‘olib", job:"Mebel", rating:4.8, price:"220 000", area:"Uchtepa", exp:"6 yil", phone:"+998 97 666 66 66"}
+        ];
+        let filtered = [...workers];
+
+        function showPage(p) {
+            ['home','workers','post'].forEach(x => document.getElementById('page-'+x).classList.add('hidden'));
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p==='workers') renderWorkers(filtered);
+            if(p==='post'){ postForm.classList.remove('hidden'); postSuccess.classList.add('hidden'); }
+        }
+
+        function renderWorkers(list) {
+            const c = document.getElementById('workersList');
+            if(!list.length){ c.innerHTML='<p class="col-span-full text-center text-gray-500 py-10">Topilmadi</p>'; return; }
+            c.innerHTML = list.map(w => `
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <div class="flex justify-between mb-2">
+                        <div>
+                            <h3 class="font-bold text-lg">${w.name}</h3>
+                            <p class="text-orange-600 text-sm">${w.job}</p>
+                        </div>
+                        <span class="text-yellow-500"><i class="fas fa-star"></i> ${w.rating}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-1"><i class="fas fa-map-marker-alt"></i> ${w.area}</p>
+                    <p class="text-sm text-gray-600 mb-1"><i class="fas fa-tag"></i> ${w.price} so‘m/kun</p>
+                    <p class="text-sm text-gray-600 mb-3"><i class="fas fa-briefcase"></i> ${w.exp}</p>
+                    <button onclick="showWorker(${w.id})" class="w-full bg-orange-600 text-white py-2 rounded-lg text-sm font-medium">Bog‘lanish</button>
+                </div>
+            `).join('');
+        }
+
+        function showWorker(id) {
+            const w = workers.find(x=>x.id===id);
+            modalContent.innerHTML = `
+                <h3 class="text-xl font-bold">${w.name}</h3>
+                <p class="text-orange-600 mb-3">${w.job}</p>
+                <p class="text-sm mb-1">Reyting: ${w.rating}</p>
+                <p class="text-sm mb-1">Hudud: ${w.area}</p>
+                <p class="text-sm mb-1">Narx: ${w.price} so‘m/kun</p>
+                <p class="text-sm mb-1">Tajriba: ${w.exp}</p>
+                <p class="text-sm mb-4">Telefon: <b>${w.phone}</b></p>
+                <a href="tel:${w.phone}" class="block w-full bg-orange-600 text-white py-3 rounded-lg font-semibold text-center">Qo‘ng‘iroq qilish</a>
+            `;
+            modal.classList.remove('hidden');
+        }
+        function closeModal(){ modal.classList.add('hidden'); }
+
+        function filterJob(job) {
+            jobFilter.value = job;
+            applyFilter();
+            showPage('workers');
+        }
+
+        function applyFilter() {
+            const job = jobFilter.value;
+            filtered = job ? workers.filter(w => w.job === job) : [...workers];
+            renderWorkers(filtered);
+        }
+
+        function submitPost(e) {
+            e.preventDefault();
+            const data = {
+                name: pName.value, phone: pPhone.value, job: pJob.value,
+                address: pAddress.value, price: pPrice.value, desc: pDesc.value,
+                created: new Date().toLocaleString('uz-UZ')
+            };
+            let list = JSON.parse(localStorage.getItem('ishtop_posts')||'[]');
+            list.push(data);
+            localStorage.setItem('ishtop_posts', JSON.stringify(list));
+            postForm.classList.add('hidden');
+            postSuccess.classList.remove('hidden');
+            postForm.reset();
+        }
+
+        renderWorkers(workers);
+    </script>
+</body>
+</html>
